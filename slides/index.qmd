@@ -1,10 +1,9 @@
 ---
 title: "Scaling on Satisfaction"
 subtitle: "Using OpenTelemetry and User Feedback to Drive Canary Deployments"
-author:
-  - Whitney Lee
-  - Thomas Vitale
-date: "2026-03-31"
+author: "<span style='text-shadow: 2px 2px 0px #4DB6AC; font-size: 1.3em;'>Whitney Lee</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style='text-shadow: 2px 2px 0px #4DB6AC; font-size: 1.3em;'>Thomas Vitale</span>"
+title-slide-attributes:
+  style: "text-align: center;"
 ---
 
 ## {.center}
@@ -18,6 +17,8 @@ Welcome slide. Set context: in this talk, the audience will participate in two l
 :::
 
 # The App {.center}
+
+<img src="images/Black_Line_Yellow_Bulb.png" width="350" style="position: absolute; top: -40px; right: -30px; transform: rotate(5deg);">
 
 ::: {.notes}
 Section divider: Scene 1 — What the audience sees. Ground them in the user experience before any infrastructure talk.
@@ -59,48 +60,22 @@ After each part, you vote: **thumbs up** or **thumbs down**
 Third reveal: the interaction. Thumbs up or thumbs down on each part. Simple binary feedback.
 :::
 
-## Scene 1: What You'll See {.spaced data-transition="none"}
+## Scene 1: What You Don't See {.spaced data-transition="none"}
 
-You'll open a URL on your phone
-
-You'll read a short **AI-generated story** (5 parts)
-
-After each part, you vote: **thumbs up** or **thumbs down**
-
-What you **don't** see...
+**Two variants** of the app exist
 
 ::: {.notes}
-Fourth reveal: the tease. Pause here for dramatic effect before revealing the hidden mechanics.
+New section — what the audience doesn't see. Two variants are running simultaneously. Everyone starts on variant A (the boring one). As votes come in, the platform decides whether to shift traffic to variant B.
 :::
 
-## Scene 1: What You'll See {.spaced data-transition="none"}
+## Scene 1: What You Don't See {.spaced data-transition="none"}
 
-You'll open a URL on your phone
-
-You'll read a short **AI-generated story** (5 parts)
-
-After each part, you vote: **thumbs up** or **thumbs down**
-
-What you **don't** see: **two variants** of the app exist
-
-::: {.notes}
-Fifth reveal: two variants exist. Everyone starts on variant A (the boring one). As votes come in, the system decides whether to shift traffic to variant B. The audience doesn't know this is happening.
-:::
-
-## Scene 1: What You'll See {.spaced data-transition="none"}
-
-You'll open a URL on your phone
-
-You'll read a short **AI-generated story** (5 parts)
-
-After each part, you vote: **thumbs up** or **thumbs down**
-
-What you **don't** see: **two variants** of the app exist
+**Two variants** of the app exist
 
 Your votes **control what happens next**
 
 ::: {.notes}
-Sixth reveal: the punchline. Their votes aren't just feedback — they're driving infrastructure decisions in real time. The system will shift traffic based on which variant gets more thumbs up. Don't explain the mechanism yet. Let them sit with the mystery before moving to Scene 2.
+The punchline. Their votes aren't just feedback — they're driving infrastructure decisions in real time. The platform will shift traffic based on which variant gets more thumbs up. Don't explain the mechanism yet. Let them sit with the mystery before moving to Scene 2.
 :::
 
 ## Scene 2: Two Apps, One Stage {data-transition="none"}
@@ -112,8 +87,6 @@ flowchart LR
 ```
 
 Two Knative Services running **different container images**
-
-Not feature flags — actually different apps
 
 ::: {.notes}
 Scene 2, step 1: Start simple. Two Knative Services running side by side. Different images, different behavior. The key insight: variant differentiation via container images, not feature flags. Each has a pod label (app: story-app-1a vs story-app-1b) that becomes the OTel service.name via the Instrumentation CR.
@@ -128,12 +101,8 @@ flowchart LR
   audience --> B["Variant B"]
 ```
 
-Each phone is routed to **one variant** — you don't pick
-
-Knative handles the traffic split
-
 ::: {.notes}
-Scene 2, step 2: The audience connects. Knative routes each request to one of the two services. The audience doesn't choose — they're assigned. This is the A/B test mechanism: different services, random assignment, same URL.
+Each phone is routed to one variant — you don't pick. Knative handles the traffic split. The audience doesn't choose — they're assigned. This is the A/B test mechanism: different services, random assignment, same URL.
 :::
 
 ## Scene 2: SpanContext Round-Trip {data-transition="none"}
@@ -145,9 +114,7 @@ flowchart LR
   P -->|"vote + spanContext"| S
 ```
 
-Server returns **spanContext** with the story — phone sends it **back** with the vote
-
-This links every vote back to the model that generated it
+**spanContext** links every vote back to the model that generated it
 
 ::: {.notes}
 Scene 2, step 3: The spanContext round-trip. This is the non-obvious OTel pattern. When the server generates a story, it captures the span context from the generation span and returns it to the client along with the story text. When the user votes, the client sends that span context back. The server uses it to create a linked evaluation span. This means in your traces, you can navigate from "user voted thumbs up on part 3" directly to "this was generated by Sonnet 4 with these parameters."
@@ -157,76 +124,56 @@ Scene 2, step 3: The spanContext round-trip. This is the non-obvious OTel patter
 
 ```{mermaid}
 %%| fig-width: 10
-flowchart TB
-  audience["Audience phones"]
-  audience --> va["Variant A"]
+flowchart LR
+  audience["Audience"] --> va["Variant A"]
   audience --> vb["Variant B"]
-  va & vb -->|" "| collector[" "]
-  collector -->|" "| platform[" "]
-  platform -.->|" "| audience
-  style collector fill:none,stroke:none
-  style platform fill:none,stroke:none
-  linkStyle 2 stroke:none
-  linkStyle 3 stroke:none
-  linkStyle 4 stroke:none
-  linkStyle 5 stroke:none
 ```
 
 For each story part, you might get **A or B** — it can switch mid-story
 
 ::: {.notes}
-Scene 2, step 4a: Start with just audience and variants. The invisible nodes below keep the layout stable across all 4 slides. The key insight: this isn't a static A/B test. You might get variant A for part 1 and variant B for part 3 — it depends on which variant is winning.
+This isn't a static A/B test. You might get variant A for part 1 and variant B for part 3 — it depends on which variant is winning.
 :::
 
 ## Scene 2: Full Architecture {data-transition="none"}
 
 ```{mermaid}
 %%| fig-width: 10
-flowchart TB
-  audience["Audience phones"]
-  audience --> va["Variant A"]
+flowchart LR
+  audience["Audience"] --> va["Variant A"]
   audience --> vb["Variant B"]
   va & vb -->|"telemetry"| collector["OTel Collector"]
-  collector -->|" "| platform[" "]
-  platform -.->|" "| audience
-  style platform fill:none,stroke:none
-  linkStyle 4 stroke:none
-  linkStyle 5 stroke:none
 ```
 
 Both variants send telemetry to the same **OTel Collector**
 
 ::: {.notes}
-Scene 2, step 4b: Add the collector. Both variants are instrumented with OpenTelemetry. Every vote, every story generation creates spans and span events. They all flow to the same collector, which is how we can compare the two variants.
+Every vote, every story generation creates spans and span events. They all flow to the same collector, which is how we can compare the two variants.
 :::
 
 ## Scene 2: Full Architecture {data-transition="none"}
 
 ```{mermaid}
 %%| fig-width: 10
-flowchart TB
-  audience["Audience phones"]
-  audience --> va["Variant A"]
+flowchart LR
+  audience["Audience"] --> va["Variant A"]
   audience --> vb["Variant B"]
   va & vb -->|"telemetry"| collector["OTel Collector"]
   collector -->|"metrics"| platform["Platform"]
-  platform -.->|" "| audience
-  linkStyle 5 stroke:none
 ```
 
 The collector turns telemetry into **comparable metrics**
 
 ::: {.notes}
-Scene 2, step 4c: Add the platform. The collector transforms raw spans into metrics — specifically, thumbs up percentage per variant. The platform (Flagger) watches these metrics.
+Specifically, thumbs up percentage per variant. The platform (Flagger) watches these metrics.
 :::
 
 ## Scene 2: Full Architecture {data-transition="none"}
 
 ```{mermaid}
 %%| fig-width: 10
-flowchart TB
-  audience["Audience phones"]
-  audience --> va["Variant A"]
+flowchart LR
+  audience["Audience"] --> va["Variant A"]
   audience --> vb["Variant B"]
   va & vb -->|"telemetry"| collector["OTel Collector"]
   collector -->|"metrics"| platform["Platform"]
@@ -236,10 +183,12 @@ flowchart TB
 The platform uses those metrics to **roll out the more popular variant**
 
 ::: {.notes}
-Scene 2, step 4d: Close the loop. The platform shifts traffic toward whichever variant has higher satisfaction. This is the feedback loop — audience votes become telemetry, telemetry becomes metrics, metrics drive the rollout, and the audience gets more of the variant they prefer. We'll dig into each of these steps after Round 1.
+The platform shifts traffic toward whichever variant has higher satisfaction. This is the feedback loop — audience votes become telemetry, telemetry becomes metrics, metrics drive the rollout, and the audience gets more of the variant they prefer. We'll dig into each of these steps after Round 1.
 :::
 
 # Round 1: Live Demo {.center}
+
+<img src="images/Flat_Zigzag_Yellow_Pink.png" width="200" style="position: absolute; top: -40px; right: -30px; transform: rotate(0deg); opacity: 0.7;">
 
 ::: {.notes}
 Section divider: Round 1 Live Demo. Audience experiences the app for the first time.
@@ -252,6 +201,8 @@ You're about to read a short AI-generated story.
 After each part, vote: **thumbs up** or **thumbs down**.
 
 That's it. Just read and react.
+
+<img src="images/Black_Line_Yellow_Bulb.png" width="300" style="position: absolute; bottom: -50px; right: -30px; transform: rotate(-6deg);">
 
 ::: {.notes}
 PRESENTER CUE: Keep this simple — don't reveal that there are two variants or what the difference is. The audience should just experience the app naturally. Switch to the Datadog dashboard on screen, THEN reveal the URL. The reveal of dry vs funny comes AFTER voting, in the debrief slide.
@@ -307,6 +258,8 @@ Transition to teaching scenes. The audience saw the feedback loop diagram in Sce
 :::
 
 # How It Works {.center}
+
+<img src="images/Isometric_Grid_Green_Pink.png" width="250" style="position: absolute; bottom: -50px; right: -30px; transform: rotate(12deg); opacity: 0.8;">
 
 ::: {.notes}
 Section divider: Teaching scenes. Now we explain the infrastructure behind what they just experienced.
@@ -381,6 +334,8 @@ Debrief Round 2. Show Datadog dashboard + Flagger canary progression. Teaching p
 
 # The Full Loop {.center}
 
+<img src="images/Black_Line_Purple_Bulb.png" width="320" style="position: absolute; bottom: -60px; right: -30px; transform: rotate(-7deg);">
+
 ::: {.notes}
 Section divider: Scene 6 — Closing the feedback loop. Tie everything together.
 :::
@@ -409,6 +364,9 @@ Wrap-up slide. Recap the key technologies and the audience's role. Emphasize: th
 ## Thank You
 
 Whitney Lee · Thomas Vitale
+
+<img src="images/Cube_Pink_Yellow_Green.png" width="250" style="position: absolute; bottom: -50px; left: -30px; transform: rotate(22deg);">
+<img src="images/Stripe_Triangle_Yellow_Purple.png" width="220" style="position: absolute; bottom: -40px; right: -30px; transform: rotate(250deg);">
 
 <!-- TODO (M7): Links, QR codes, social handles, repo URLs -->
 

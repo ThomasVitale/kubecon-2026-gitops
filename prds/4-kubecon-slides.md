@@ -148,6 +148,64 @@ Audience votes → App span events → Collector transforms → Prometheus metri
 | 2026-03-14 | Two live demo rounds interleaved with teaching | Audience experiences the magic first (Round 1), then learns how it works, then experiences it again with understanding (Round 2). More engaging than explain-then-demo. |
 | 2026-03-14 | Mermaid for diagrams (not custom SVG or images) | Mermaid is version-controllable, diffable, and editable in markdown. Known Quarto+Reveal.js rendering quirks exist but basic flowcharts work fine. |
 
+## Source Files for Diagram Accuracy
+
+The implementation AI MUST read these files to build accurate diagrams. Do not invent architecture — reference the real manifests.
+
+### This repo (kubecon-2026-gitops)
+
+| File | What it provides for slides |
+|------|----------------------------|
+| `apps/base/story-app-1/service.yml` | Variant A Knative Service: container image, env vars, OTel annotation, security context, resource limits |
+| `apps/base/story-app-1/service-1b.yml` | Variant B Knative Service: same structure, different image + pod label (`app: story-app-1b`) |
+| `apps/base/story-app-1/instrumentation.yml` | OTel Instrumentation CR: how auto-instrumentation is injected, exporter endpoint, service name from pod label |
+| `apps/base/story-app-1/canary.yml` | Flagger Canary resource: `stepWeight: 10`, `threshold: 3`, `interval: 3s`, metric template reference |
+| `apps/base/story-app-1/metrics.yml` | Flagger MetricTemplate: the exact PromQL query that computes `(B thumbs_up %) - (A thumbs_up %)`, the `> 0` division guard, the `or on() vector(0)` NaN fallback |
+| `infrastructure/observability/opentelemetry-collector.yml` | OTel Collector config: OTLP receiver, transform processor (event attribute promotion), spanmetrics connector (namespace, dimensions, flush interval), Prometheus + Datadog exporters, service pipeline wiring |
+| `infrastructure/flagger/flagger.yml` | Flagger HelmRelease: provider=knative, metrics server pointing to Prometheus |
+| `clusters/platform/apps.yml` | FluxCD Kustomization: `targetNamespace: apps`, reconciliation interval, prune behavior |
+| `scripts/load-test-votes.sh` | Load test script: vote payload shape, warmup/advance/fetch/vote flow |
+
+### Companion repo (scaling-on-satisfaction)
+
+| File | What it provides for slides |
+|------|----------------------------|
+| `src/telemetry.js` | `emitEvaluationEvent()`: creates the `evaluate UserSatisfaction` span + `gen_ai.evaluation.result` span event with all attributes (`score.label`, `score.value`, `response.id`, `story.part`). Also shows the span link back to generation span via `spanContext`. |
+| `src/story/generator.js` | Generation span: `chat ${model}` with `gen_ai.operation.name`, `gen_ai.request.model`, `gen_ai.response.id`. Returns `spanContext` to client for round-trip. |
+| `src/routes/api.js` | Vote endpoint (`POST /api/story/:part/vote`): receives `{vote, responseId, spanContext}`, calls `emitEvaluationEvent()`. Story endpoint returns `{text, responseId, spanContext}`. |
+| `src/public/app.js` | Client-side: polls `/api/story/status`, fetches story parts, captures `responseId` + `spanContext` from response, sends them back with vote. Shows the spanContext round-trip. |
+| `src/public/index.html` | Audience UI: welcome screen, story text display, thumbs up/down vote buttons, progress indicator. |
+| `src/story/prompts.js` | Story beat specifications: Round 1 (Nyx on the Moon, dry vs funny), Round 2 (Rae at the Circus, Haiku vs Opus). ~100 words per part, 5 parts per story. |
+
+## Quarto + Reveal.js + Mermaid Reference
+
+### Documentation
+
+- **Quarto Reveal.js**: https://quarto.org/docs/presentations/revealjs/ — slide syntax, speaker notes, themes, fragments
+- **Quarto Diagrams**: https://quarto.org/docs/authoring/diagrams.html — native Mermaid support via ```` ```{mermaid} ```` code blocks
+- **Reveal.js Markdown**: https://revealjs.com/markdown/ — `---` for horizontal slides, `----` for vertical, `Note:` for speaker notes
+- **Mermaid Flowchart syntax**: https://mermaid.js.org/syntax/flowchart.html — nodes, edges, subgraphs, styling
+
+### Quarto Reveal.js + Mermaid Known Issues (as of March 2026)
+
+- Mermaid renders as **static SVG** in Reveal.js (not live JS) — no interactive tooltips
+- **Label truncation**: final characters can get cut off in nodes ([quarto-cli#12696](https://github.com/quarto-dev/quarto-cli/issues/12696))
+- **Label positioning**: labels may drift outside nodes ([quarto-cli#13598](https://github.com/quarto-dev/quarto-cli/issues/13598))
+- **Diagram resizing**: `width`/`height` may not be respected — test sizing carefully
+- **Workaround for incremental builds**: Since Mermaid diagrams are static SVGs, build-up animation requires multiple slides showing progressively more complete versions of the diagram (not reveal.js fragments within a single diagram)
+
+### Slide Syntax Quick Reference
+
+- **YAML frontmatter**: `title`, `format: revealjs`, `theme`, `mermaid.theme` — see https://quarto.org/docs/presentations/revealjs/#themes
+- **Horizontal slide separator**: `---` on its own line
+- **Vertical (drill-down) slide**: use `## Heading` within a section
+- **Mermaid diagram**: fenced code block with `{mermaid}` language tag
+- **Speaker notes**: wrap in `::: {.notes}` / `:::` fenced div
+- **Incremental list**: wrap in `::: {.incremental}` / `:::` fenced div
+- **Centered content**: `## Title {.center}`
+- **Fragments** (appear on click): add `{.fragment}` class to elements
+- **Preview locally**: `quarto preview slides/index.qmd`
+
 ## Out of Scope
 
 - **Datadog dashboard modifications** — the dashboard already exists (`68y-xeg-j6s`), slides just display it

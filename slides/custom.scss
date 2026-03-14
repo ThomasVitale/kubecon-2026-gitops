@@ -63,13 +63,15 @@ $presentation-h2-font-size: 1.4em;
   line-height: 1.6;
 }
 
-// Prevent content from overflowing off the bottom of slides
-.reveal .slides section {
-  padding-bottom: 40px;
-}
-
 // Constrain Mermaid diagrams so they leave room for text below
 .reveal .cell-output-display {
-  max-height: 55vh;
+  max-height: 45vh;
   overflow: hidden;
+  margin-bottom: 0.3em;
+}
+
+// Tighter paragraph spacing on diagram slides
+.reveal .slides section p {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
 }

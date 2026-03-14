@@ -288,7 +288,7 @@ There were **two versions** of that story.
 | | Variant A | Variant B |
 |---|---|---|
 | **Tone** | Dry, matter-of-fact | Funny, playful |
-| **Model** | Same (Sonnet 4) | Same (Sonnet 4) |
+| **Model** | Sonnet 4 | Sonnet 4 |
 
 ::: {.notes}
 The big reveal. The audience didn't know there were two variants. Now show the Datadog dashboard — the funnier variant should have higher satisfaction. Point out that the system was already shifting traffic toward the winner while they were voting.

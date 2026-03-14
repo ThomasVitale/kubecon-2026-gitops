@@ -129,7 +129,7 @@ Audience votes → App span events → Collector transforms → Prometheus metri
 
 - [x] **M2: Talk skeleton with all sections** — Create the full slide outline with section headers, speaker notes placeholders, and empty diagram placeholders for all 6 scenes plus intro/outro. Establish the horizontal flow (sections) and vertical drill-down pattern.
 
-- [ ] **M3: Scene 1-2 slides (App UX + Architecture)** — Build the app overview and architecture diagrams. These set context before Round 1.
+- [x] **M3: Scene 1-2 slides (App UX + Architecture)** — Build the app overview and architecture diagrams. These set context before Round 1.
 
 - [ ] **M4: Live demo slides (Round 1 + Round 2)** — Create the "demo time" slides with Datadog dashboard placeholder/instructions, audience URL display, and presenter cue notes for both rounds.
 

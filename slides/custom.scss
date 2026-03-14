@@ -39,11 +39,22 @@ $presentation-h2-font-size: 1.4em;
   background-color: $accent;
   color: white;
   border-bottom: 2px solid $accent-dark;
+  padding: 0.5em 1em;
+}
+
+// Table cells — more breathing room
+.reveal table tbody td {
+  padding: 0.5em 1em;
 }
 
 // Table rows
 .reveal table tbody tr:nth-child(even) {
   background-color: rgba($accent-light, 0.08);
+}
+
+// Space before tables
+.reveal table {
+  margin-top: 0.8em;
 }
 
 // Slide number styling

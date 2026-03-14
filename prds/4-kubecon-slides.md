@@ -131,7 +131,7 @@ Audience votes → App span events → Collector transforms → Prometheus metri
 
 - [x] **M3: Scene 1-2 slides (App UX + Architecture)** — Build the app overview and architecture diagrams. These set context before Round 1.
 
-- [ ] **M4: Live demo slides (Round 1 + Round 2)** — Create the "demo time" slides with Datadog dashboard placeholder/instructions, audience URL display, and presenter cue notes for both rounds.
+- [x] **M4: Live demo slides (Round 1 + Round 2)** — Create the "demo time" slides with Datadog dashboard placeholder/instructions, audience URL display, and presenter cue notes for both rounds.
 
 - [ ] **M5: Scene 3-4 slides (Telemetry + Collector)** — Build the OTel telemetry and collector pipeline diagrams with incremental reveal. These are the technical core of the talk.
 

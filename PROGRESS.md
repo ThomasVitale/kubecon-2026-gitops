@@ -48,3 +48,7 @@ Development progress log for kubecon-2026-gitops. Tracks implementation mileston
 - (2026-03-14) Quarto + Reveal.js presentation project initialized in `slides/` — Mermaid SVG rendering, title slide with architecture overview diagram (PRD #4, M1)
 - (2026-03-14) Full talk skeleton with 19 slides: 6 teaching scenes, 2 demo rounds, intro/outro, section dividers, speaker notes, and diagram placeholders (PRD #4, M2)
 - (2026-03-14) Scene 1-2 slides: app UX columns layout, architecture flowchart (two Knative Services, admin panel, pod labels), and spanContext round-trip sequence diagram — all sourced from real manifests (PRD #4, M3)
+- (2026-03-14) Round 1+2 demo slides: vote slides with QR code instructions, Datadog dashboard links, reveal tables, punchline slides (PRD #4, M4)
+
+### Changed
+- (2026-03-14) Extensive style refinements: teal accent theme, progressive reveals with data-transition=none, LR architecture diagrams, Scene 1 split into What You'll See / What You Don't See, removed spoilers before voting, decorative PNG images (resized to 800px)

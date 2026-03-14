@@ -12,9 +12,12 @@ $body-color: #2d2d2d;
 $headings-color: #1a1a1a;
 
 // Slightly larger base font for readability at conference scale
-$presentation-font-size-root: 42px;
+$presentation-font-size-root: 40px;
 $presentation-heading-font: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
 $presentation-font-family-body: "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+// Tighter heading size so titles don't eat slide real estate
+$presentation-h2-font-size: 1.4em;
 
 /*-- scss:rules --*/
 
@@ -51,4 +54,22 @@ $presentation-font-family-body: "Source Sans Pro", "Helvetica Neue", Helvetica, 
 // Speaker notes marker (visible only in speaker view)
 .reveal .notes {
   border-left: 3px solid $accent-light;
+}
+
+// Spaced-out text slides — fills the full slide height
+.reveal section.spaced p {
+  margin-bottom: 0.8em;
+  font-size: 1.1em;
+  line-height: 1.6;
+}
+
+// Prevent content from overflowing off the bottom of slides
+.reveal .slides section {
+  padding-bottom: 40px;
+}
+
+// Constrain Mermaid diagrams so they leave room for text below
+.reveal .cell-output-display {
+  max-height: 55vh;
+  overflow: hidden;
 }

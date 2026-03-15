@@ -29,7 +29,7 @@ Development progress log for kubecon-2026-gitops. Tracks implementation mileston
   - Dashboard layout designed: 7 widgets in 3 groups (Vote Totals, Vote Trends, Deep Dive), TV mode, dark theme
 
 ### Changed
-- (2026-03-12) Knative Service manifest: reduced resource limits (200m/128Mi → 500m/256Mi) and enabled scale-to-zero (min 0, max 5) — app is now stateless
+- (2026-03-12) Knative Service manifest: increased resource limits (200m/128Mi → 500m/256Mi) and enabled scale-to-zero (min 0, max 5) — app is now stateless
 - (2026-03-12) `story.part` dependency resolved — attribute live in rebuilt container images, M2 unblocked
 
 - (2026-03-12) Datadog dashboard created via API — 7 widgets across 3 groups (Vote Totals, Vote Trends, Deep Dive)

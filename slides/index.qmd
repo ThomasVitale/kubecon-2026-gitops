@@ -22,13 +22,13 @@ Welcome slide. Set context: in this talk, the audience will participate in two l
 Section divider: Scene 1 — What the audience sees. Ground them in the user experience before any infrastructure talk.
 :::
 
-## Scene 1: What You'll See {.center}
+## What You'll See {.center}
 
 ::: {.notes}
 Scene 1 opening — blank title slide. Pause here before revealing details one at a time.
 :::
 
-## Scene 1: What You'll See {.spaced data-transition="none"}
+## What You'll See {.spaced data-transition="none"}
 
 You'll open a URL on your phone
 
@@ -36,7 +36,7 @@ You'll open a URL on your phone
 First reveal: just the basic action. The audience will open a URL.
 :::
 
-## Scene 1: What You'll See {.spaced data-transition="none"}
+## What You'll See {.spaced data-transition="none"}
 
 You'll open a URL on your phone
 
@@ -46,7 +46,7 @@ You'll read a short **AI-generated story** (5 parts)
 Second reveal: the content. AI-generated story, 5 parts. The story is about 100 words per part, with named characters.
 :::
 
-## Scene 1: What You'll See {.spaced data-transition="none"}
+## What You'll See {.spaced data-transition="none"}
 
 You'll open a URL on your phone
 
@@ -58,7 +58,7 @@ After each part, you vote: **thumbs up** or **thumbs down**
 Third reveal: the interaction. Thumbs up or thumbs down on each part. Simple binary feedback.
 :::
 
-## Scene 1: What You Don't See {.spaced data-transition="none"}
+## What You Don't See {.spaced data-transition="none"}
 
 **Two variants** of the app exist
 
@@ -66,7 +66,7 @@ Third reveal: the interaction. Thumbs up or thumbs down on each part. Simple bin
 New section — what the audience doesn't see. Two variants are running simultaneously. Everyone starts on variant A (the boring one). As votes come in, the platform decides whether to shift traffic to variant B.
 :::
 
-## Scene 1: What You Don't See {.spaced data-transition="none"}
+## What You Don't See {.spaced data-transition="none"}
 
 **Two variants** of the app exist
 
@@ -76,7 +76,7 @@ Your votes **control what happens next**
 The punchline. Their votes aren't just feedback — they're driving infrastructure decisions in real time. The platform will shift traffic based on which variant gets more thumbs up. Don't explain the mechanism yet. Let them sit with the mystery before moving to Scene 2.
 :::
 
-## Scene 2: Two Apps, One Stage {data-transition="none"}
+## Two Apps, One Stage {data-transition="none"}
 
 ```{mermaid}
 %%| fig-width: 10
@@ -90,7 +90,7 @@ Two Knative Services running **different container images**
 Scene 2, step 1: Start simple. Two Knative Services running side by side. Different images, different behavior. The key insight: variant differentiation via container images, not feature flags. Each has a pod label (app: story-app-1a vs story-app-1b) that becomes the OTel service.name via the Instrumentation CR.
 :::
 
-## Scene 2: Full Architecture {data-transition="none"}
+## Full Architecture {data-transition="none"}
 
 ```{mermaid}
 %%| fig-width: 10
@@ -114,7 +114,7 @@ Each story part, you might get **A or B** — it can switch mid-story
 This isn't a static A/B test. You might get variant A for part 1 and variant B for part 3 — it depends on which variant is winning.
 :::
 
-## Scene 2: Full Architecture {data-transition="none"}
+## Full Architecture {data-transition="none"}
 
 ```{mermaid}
 %%| fig-width: 10
@@ -135,7 +135,7 @@ Both variants send telemetry to the same **OTel Collector**
 Every vote, every story generation creates spans and span events. They all flow to the same collector, which is how we can compare the two variants.
 :::
 
-## Scene 2: Full Architecture {data-transition="none"}
+## Full Architecture {data-transition="none"}
 
 ```{mermaid}
 %%| fig-width: 10
@@ -154,7 +154,7 @@ The collector turns telemetry into **comparable metrics**
 Specifically, thumbs up percentage per variant. The platform (Flagger) watches these metrics.
 :::
 
-## Scene 2: Full Architecture {data-transition="none"}
+## Full Architecture {data-transition="none"}
 
 ```{mermaid}
 %%| fig-width: 10
@@ -172,7 +172,7 @@ The platform uses those metrics to **roll out the more popular variant**
 The platform shifts traffic toward whichever variant has higher satisfaction. This is the feedback loop — audience votes become telemetry, telemetry becomes metrics, metrics drive the rollout, and the audience gets more of the variant they prefer. We'll dig into each of these steps after Round 1.
 :::
 
-# Round 1: Live Demo {.center}
+# Live Demo {.center}
 
 <img src="images/Flat_Zigzag_Yellow_Pink.png" width="200" style="position: absolute; top: -40px; right: -30px; transform: rotate(0deg); opacity: 0.7;">
 
@@ -180,7 +180,7 @@ The platform shifts traffic toward whichever variant has higher satisfaction. Th
 Section divider: Round 1 Live Demo. Audience experiences the app for the first time.
 :::
 
-## Round 1: Let's Try It
+## Let's Try It
 
 You're about to read a short AI-generated story.
 
@@ -216,7 +216,7 @@ Watch the votes come in:
 PRESENTER CUE: Click the link to open the Datadog dashboard in TV mode. This shows votes per variant and satisfaction rates updating in real time. Stay on this while the audience votes. The dashboard URL is: https://app.datadoghq.com/dashboard/68y-xeg-j6s?tv_mode=true
 :::
 
-## Round 1: The Reveal
+## The Reveal
 
 There were **two versions** of that story.
 
@@ -231,7 +231,7 @@ The big reveal. The audience didn't know there were two variants. Now show the D
 
 ## {.center data-transition="none"}
 
-<h2 style="font-size: 1.6em; margin-bottom: 1em;">Round 1: What Just Happened?</h2>
+<h2 style="font-size: 1.6em; margin-bottom: 1em;">What Just Happened?</h2>
 
 <p style="font-size: 1.3em; margin-bottom: 1.2em;">The platform **shifted traffic** toward the variant you liked more.</p>
 
@@ -249,20 +249,392 @@ Transition to teaching scenes. The audience saw the feedback loop diagram in Sce
 Section divider: Teaching scenes. Now we explain the infrastructure behind what they just experienced.
 :::
 
-## Scene 3: How a Vote Becomes Data
-
-<!-- TODO (M5): Incremental span hierarchy diagram -->
-<!-- Build 1: User taps thumbs up → app creates span: evaluate UserSatisfaction -->
-<!-- Build 2: Span event: gen_ai.evaluation.result with attributes -->
-<!-- Build 3: Link back to generation span via gen_ai.response.id -->
+## How a Vote Becomes Data {.center}
 
 ::: {.notes}
-Scene 3: The Telemetry.
-Introduce OpenTelemetry and gen_ai semantic conventions. Key teaching points: span events (not just spans), gen_ai semantic conventions, linking evaluation to generation — the OTel-native way to capture user feedback on AI output.
-Incremental build: (1) user taps thumbs up, (2) app creates evaluate UserSatisfaction span, (3) span event gen_ai.evaluation.result with attributes (score.label, score.value, story.part), (4) link back to generation span via gen_ai.response.id.
+Scene 3 title slide. This is where we introduce OpenTelemetry for the first time.
 :::
 
-## Scene 4: From Events to Metrics
+## You Tap Thumbs Up {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+flowchart LR
+  user["You"] -->|"thumbs up"| app["App"]
+```
+
+::: {.notes}
+Start simple. The user taps thumbs up. What happens inside the app?
+:::
+
+## The App Creates a Span {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+flowchart LR
+  user["You"] -->|"thumbs up"| app["App"]
+  app --> span["evaluate UserSatisfaction<br/>(span)"]
+```
+
+The app creates an **OpenTelemetry span** — a unit of work
+
+::: {.notes}
+First mention of OpenTelemetry. A span is a structured unit of work — connected to other spans in a trace. The app creates one called "evaluate UserSatisfaction" every time someone votes.
+:::
+
+## The Vote Creates a Span Event {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+flowchart LR
+  user["You"] -->|"thumbs up"| app["App"]
+  app --> grp
+  subgraph grp [" "]
+    direction TB
+    span["evaluate UserSatisfaction<br/>(span)"] -->|"timestamp"| event["gen_ai.evaluation.result<br/>(span event)"]
+  end
+  style grp fill:none,stroke:none
+```
+
+The vote is recorded as a **span event** inside the span
+
+::: {.notes}
+The span event appears as a child of the span. It's called gen_ai.evaluation.result and it carries the vote data. The audience sees the visual relationship before we explain what a span event is.
+:::
+
+## {.center data-transition="none"}
+
+<h2 style="font-size: 1.8em;">What's a span event?</h2>
+
+::: {.notes}
+Pause here. Let the question land. Most people think OTel = spans and metrics. Span events are the underused third concept.
+:::
+
+## {.center data-transition="none"}
+
+<h2 style="font-size: 1.8em; margin-bottom: 1.2em;">What's a span event?</h2>
+
+<p style="font-size: 1.3em; margin-bottom: 1em;">OTel's **structured log**</p>
+
+<p style="font-size: 1.3em;">Automatically correlated with the trace</p>
+
+::: {.notes}
+A span event is a thing that happened during a span — like a log entry, but it lives inside the span, so you get trace context for free. No manual correlation needed.
+:::
+
+## Semantic Conventions {.center data-transition="none"}
+
+<p style="font-size: 1.3em; margin-bottom: 1em;">**gen_ai semantic conventions**</p>
+
+<p style="font-size: 1.1em;">A standard vocabulary — not custom fields</p>
+
+<p style="font-size: 1.1em;">Any OTel-compatible tool knows what these mean</p>
+
+::: {.notes}
+This is the "why should I care" beat. The attributes on the span event aren't made up — they follow gen_ai semantic conventions. score.label = thumbs_up, score.value = 1.0, story.part = 3. Because these are standardized, any OTel tool (Datadog, Jaeger, Grafana) can read and act on them without custom configuration.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+```
+
+::: {.notes}
+Empty diagram — just the four participants. Set the stage.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  S->>M: generate story part
+```
+
+::: {.notes}
+Step 1: The server calls the model to generate a story part.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+```
+
+::: {.notes}
+Step 2: This is wrapped in a storygen span — the activate bar shows the span is open while we wait for the model.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+```
+
+::: {.notes}
+Step 3: The model responds with the story part. The storygen span closes — it now contains the model name and response ID.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+  S->>P: story + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+```
+
+::: {.notes}
+Step 2: The storygen span wraps the model call. After it closes, the server sends the story plus the spanContext to the phone. The spanContext is the token that will link everything together later.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+  S->>P: story + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  rect rgb(77, 182, 172)
+  Note over P: user reads story
+  end
+```
+
+::: {.notes}
+Step 3: The user reads the story. The phone is holding onto the spanContext this whole time.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+  S->>P: story + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  rect rgb(77, 182, 172)
+  Note over P: user reads story<br/>👍
+  end
+```
+
+::: {.notes}
+Step 4: The user taps thumbs up.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+  S->>P: story + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  rect rgb(77, 182, 172)
+  Note over P: user reads story<br/>👍
+  end
+  P->>S: 👍 + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+```
+
+::: {.notes}
+Step 5: The phone sends the vote AND the spanContext back to the server. The spanContext has round-tripped: server to phone and back.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+  S->>P: story + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  rect rgb(77, 182, 172)
+  Note over P: user reads story<br/>👍
+  end
+  P->>S: 👍 + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  activate S
+  Note right of S: evaluate satisfaction span
+  deactivate S
+```
+
+::: {.notes}
+Step 6: The server creates the evaluate satisfaction span, links it to the storygen span using the spanContext.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+  S->>P: story + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  rect rgb(77, 182, 172)
+  Note over P: user reads story<br/>👍
+  end
+  P->>S: 👍 + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  activate S
+  Note right of S: evaluate satisfaction span<br/>contains 👍 span event
+  deactivate S
+```
+
+::: {.notes}
+Step 7: The span event with the vote data lives inside the evaluate satisfaction span.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+  S->>P: story + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  rect rgb(77, 182, 172)
+  Note over P: user reads story<br/>👍
+  end
+  P->>S: 👍 + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  activate S
+  Note right of S: evaluate satisfaction span<br/>contains 👍 span event
+  deactivate S
+  S->>C: 👍 + spans + events + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+```
+
+**spanContext** links storygen span to evaluate satisfaction span
+
+::: {.notes}
+Step 7: Everything flows to the OTel Collector via OTLP. The spanContext is what links the storygen span to the evaluate satisfaction span.
+:::
+
+## The Journey of a 👍 {data-transition="none"}
+
+```{mermaid}
+%%| fig-width: 10
+sequenceDiagram
+  participant S as Server
+  participant M as Model
+  participant P as Phone
+  participant C as OTel Collector
+
+  activate S
+  Note right of S: storygen span
+  S->>M: generate story part
+  M-->>S: story part
+  deactivate S
+  S->>P: story + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  rect rgb(77, 182, 172)
+  Note over P: user reads story<br/>👍
+  end
+  P->>S: 👍 + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+  activate S
+  Note right of S: evaluate satisfaction span<br/>contains 👍 span event
+  deactivate S
+  S->>C: 👍 + spans + events + 𝘀𝗽𝗮𝗻𝗖𝗼𝗻𝘁𝗲𝘅𝘁
+```
+
+OpenTelemetry receives a **holistic picture of one user's experience**
+
+::: {.notes}
+The punchline. OpenTelemetry now has the complete picture: what was generated, by which model, for which variant, and how the user felt about it. This bridges into Scene 4 — what the collector does with this data.
+:::
+
+## Here's What It Looks Like {.center data-transition="none"}
+
+**[See a real trace in Datadog](https://app.datadoghq.com/apm/traces?query=operation_name%3Aevaluate%20UserSatisfaction)**
+
+::: {.notes}
+PRESENTER CUE: Click this link to open Datadog APM traces filtered to evaluate satisfaction spans. Pick any trace, expand it, show the span event with its attributes. Quick aside — 30 seconds max — then back to slides. This only works if Thomas's cluster is running and has recent traffic.
+:::
+
+## From Events to Metrics
 
 <!-- TODO (M5): Incremental collector pipeline diagram -->
 <!-- Build 1: Traces arrive via OTLP -->
@@ -276,7 +648,7 @@ The OTel Collector transforms raw telemetry into actionable metrics. Key teachin
 Incremental build: (1) OTLP receiver, (2) transform processor, (3) spanmetrics connector → gen_ai_calls_total with dimensions, (4) fork to Prometheus exporter + Datadog exporter.
 :::
 
-## Scene 5: Flagger's Canary Logic
+## Flagger's Canary Logic
 
 <!-- TODO (M6): Incremental Flagger decision loop diagram -->
 <!-- Build 1: Prometheus scrapes gen_ai_calls_total every 3s -->
@@ -291,13 +663,13 @@ Show how metrics drive automated rollout decisions. Key teaching point: threshol
 Incremental build: (1) Prometheus scrapes collector, (2) Flagger runs PromQL query, (3) threshold check, (4) traffic split progression, (5) rollback if delta drops.
 :::
 
-# Round 2: Live Demo {.center}
+# Live Demo {.center}
 
 ::: {.notes}
 Section divider: Round 2 Live Demo. Now the audience understands the infrastructure — their votes have new meaning.
 :::
 
-## Round 2: This Time You Know
+## This Time You Know
 
 Now you understand the feedback loop.
 
@@ -327,7 +699,7 @@ Watch the votes — and the **canary progression**:
 PRESENTER CUE: Click the link to open the Datadog dashboard in TV mode. This time, also point out the Flagger canary progression if visible — traffic weight shifting in real time. The audience can see their votes driving the rollout.
 :::
 
-## Round 2: The Reveal
+## The Reveal
 
 | | Variant A | Variant B |
 |---|---|---|
@@ -358,7 +730,7 @@ The teaching point: this is how a company decides whether spending more on a pre
 Section divider: Scene 6 — Closing the feedback loop. Tie everything together.
 :::
 
-## Scene 6: Closing the Feedback Loop
+## Closing the Feedback Loop
 
 <!-- TODO (M6): Full architecture diagram with the feedback loop highlighted -->
 <!-- Complete pipeline: Audience votes → App span events → Collector transforms → Prometheus metrics → Flagger queries → Knative traffic split → Audience gets more of the better variant → More votes → ... -->

@@ -31,10 +31,10 @@ The audience votes without knowing the setup. They just read and react.
 ## How It Works (Teaching Scenes)
 
 ### Scene 3: How a Vote Becomes Data
-You tap thumbs up. The app creates an OpenTelemetry span (`evaluate UserSatisfaction`). The span records a span event (`gen_ai.evaluation.result`) with your vote, using gen_ai semantic conventions. Your vote is linked back to the model that generated the story.
+You tap thumbs up. The app creates an OpenTelemetry span (`evaluate UserSatisfaction`). Inside that span, the app records a **span event** — OTel's version of a structured log, automatically correlated with the trace. The span event (`gen_ai.evaluation.result`) carries your vote using **gen_ai semantic conventions** — a standard vocabulary so any OTel-compatible tool knows what these fields mean (not custom instrumentation). The event records: thumbs_up, score 1.0, story part 3. Your vote is also linked back to the generation that produced the story, and to which story part you voted on. Then: "here's what this looks like in practice" — link into a Datadog APM trace showing the real span event with its attributes.
 
 ### Scene 4: From Events to Metrics
-Traces arrive at the OTel Collector via OTLP. The transform processor promotes span event attributes to the parent span (spanmetrics reads span attributes, not events — this is the trick). The spanmetrics connector converts spans into a counter metric (`gen_ai_calls_total`) with dimensions like `service_name` and `score.label`. Two outputs fork: Prometheus (in-cluster, for Flagger) and Datadog (for dashboards).
+Start with: what's an OTel Collector? (The audience hasn't been introduced to it yet.) Then build the pipeline: traces arrive via OTLP. The transform processor promotes span event attributes to the parent span (spanmetrics reads span attributes, not events — this is the non-obvious trick). The spanmetrics connector converts spans into a counter metric (`gen_ai_calls_total`) with dimensions like `service_name` and `score.label`. Two outputs fork: Prometheus (in-cluster, for Flagger) and Datadog (for dashboards).
 
 ### Scene 5: Flagger's Canary Logic
 Prometheus scrapes the metrics. Flagger runs a PromQL query: is Variant B's thumbs-up percentage at least 5 points higher than Variant A's? If yes for 3 consecutive checks, advance the traffic split by 10%. If the delta drops, roll back. The threshold is relative — the platform promotes the variant that makes users happier.

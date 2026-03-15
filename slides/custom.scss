@@ -68,7 +68,7 @@ $presentation-h2-font-size: 1.4em;
 }
 
 // Spaced-out text slides — fills the full slide height
-.reveal section.spaced p {
+.reveal .slides section.spaced p {
   margin-bottom: 0.8em;
   font-size: 1.1em;
   line-height: 1.6;

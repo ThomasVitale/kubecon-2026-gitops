@@ -363,7 +363,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 1: The server calls the model to generate a story part.
+The server calls the model to generate a story part.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -382,7 +382,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 2: This is wrapped in a storygen span — the activate bar shows the span is open while we wait for the model.
+This is wrapped in a storygen span — the activate bar shows the span is open while we wait for the model.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -403,7 +403,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 3: The model responds with the story part. The storygen span closes — it now contains the model name and response ID.
+The model responds with the story part. The storygen span closes — it now contains the model name and response ID.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -425,7 +425,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 2: The storygen span wraps the model call. After it closes, the server sends the story plus the spanContext to the phone. The spanContext is the token that will link everything together later.
+The storygen span wraps the model call. After it closes, the server sends the story plus the spanContext to the phone. The spanContext is the token that will link everything together later.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -450,7 +450,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 3: The user reads the story. The phone is holding onto the spanContext this whole time.
+The user reads the story. The phone is holding onto the spanContext this whole time.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -475,7 +475,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 4: The user taps thumbs up.
+The user taps thumbs up.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -501,7 +501,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 5: The phone sends the vote AND the spanContext back to the server. The spanContext has round-tripped: server to phone and back.
+The phone sends the vote AND the spanContext back to the server. The spanContext has round-tripped: server to phone and back.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -530,7 +530,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 6: The server creates the evaluate satisfaction span, links it to the storygen span using the spanContext.
+The server creates the evaluate satisfaction span, links it to the storygen span using the spanContext.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -559,7 +559,7 @@ sequenceDiagram
 ```
 
 ::: {.notes}
-Step 7: The span event with the vote data lives inside the evaluate satisfaction span.
+The span event with the vote data lives inside the evaluate satisfaction span.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}
@@ -591,7 +591,7 @@ sequenceDiagram
 **spanContext** links storygen span to evaluate satisfaction span
 
 ::: {.notes}
-Step 7: Everything flows to the OTel Collector via OTLP. The spanContext is what links the storygen span to the evaluate satisfaction span.
+Everything flows to the OTel Collector via OTLP. The spanContext is what links the storygen span to the evaluate satisfaction span.
 :::
 
 ## The Journey of a 👍 {data-transition="none"}

@@ -28,6 +28,8 @@ spec:
               value: "http://otel-collector.observability.svc.cluster.local:4318"
             - name: OTEL_LOGS_EXPORTER
               value: "none"
+            - name: OTEL_METRICS_EXPORTER
+              value: "none"
             - name: MISTRAL_AI_API_KEY
               valueFrom:
                 secretKeyRef:

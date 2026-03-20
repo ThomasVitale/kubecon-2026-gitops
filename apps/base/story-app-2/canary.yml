@@ -11,9 +11,9 @@ spec:
     name: story-app-2
   progressDeadlineSeconds: 3600
   analysis:
-    interval: 10s       # check every 10 s — progression visible on screen
-    threshold: 5        # 5 consecutive failures = 50 s before rollback
-    stepWeight: 10      # +10% per successful check; full rollout ≈ 100 s
+    interval: 30s       # check every 30 s — full rollout ≈ 5 min, visible on screen
+    threshold: 5        # 5 consecutive failures = 150 s (2.5 min) before rollback
+    stepWeight: 10      # +10% per successful check
     maxWeight: 100
     metrics:
       - name: satisfaction-score-rate-2
@@ -22,4 +22,4 @@ spec:
           namespace: apps
         thresholdRange:
           min: 5        # canary must be ≥5pp better than primary to advance
-        interval: 1m    # 1-minute rate window — reacts to live audience votes
+        interval: 1m    # 1-minute rate window — captures audience vote burst quickly

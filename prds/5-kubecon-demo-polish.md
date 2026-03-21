@@ -1,7 +1,7 @@
 # PRD #5: KubeCon Demo Polish — Slides, Dashboards, QR Codes
 
 **Issue**: [#5](https://github.com/wiggitywhitney/kubecon-2026-gitops/issues/5)
-**Status**: Draft
+**Status**: In Progress
 **Priority**: High
 **Created**: 2026-03-20
 
@@ -34,13 +34,13 @@ Update all presentation assets to match current architecture and agreed talk flo
 
 ## Milestones
 
-### M1: Slide Corrections
-- [ ] Fix model names throughout (remove Sonnet 4, Haiku 4.5, Opus 4.6 references; use current model names or placeholders)
-- [ ] Fix architecture diagrams — one Knative Service per story with Flagger canary, not two separate services
-- [ ] Update metric label references from `service_name` to `story_name`
-- [ ] Remove Node.js OTel injection annotation references — Java app handles its own OTel
-- [ ] Update Collector YAML examples to match current config (v0.146.0, `story.name` dimension)
-- [ ] Fix container image references (ghcr.io/thomasvitale, not wiggitywhitney Docker Hub)
+### M1: Slide Corrections ✅
+- [x] Fix model names throughout (remove Sonnet 4, Haiku 4.5, Opus 4.6 references; use current model names or placeholders)
+- [x] Fix architecture diagrams — one Knative Service per story with Flagger canary, not two separate services
+- [x] Update metric label references from `service_name` to `story_name`
+- [x] Remove Node.js OTel injection annotation references — Java app handles its own OTel
+- [x] Update Collector YAML examples to match current config (v0.146.0, `story.name` dimension)
+- [x] Fix container image references (ghcr.io/thomasvitale, not wiggitywhitney Docker Hub)
 
 ### M2: Slide Restructuring
 - [ ] Reorder slides to match agreed flow: premise → demo 1 → how it works → demo 2 → end credits

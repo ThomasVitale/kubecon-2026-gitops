@@ -84,10 +84,10 @@ flowchart LR
   A["Variant A<br/>story-app-1a"] ~~~ B["Variant B<br/>story-app-1b"]
 ```
 
-Two Knative Services running **different container images**
+One Knative Service — Flagger creates the canary variant with **different configuration**
 
 ::: {.notes}
-Scene 2, step 1: Start simple. Two Knative Services running side by side. Different images, different behavior. The key insight: variant differentiation via container images, not feature flags. Each has a pod label (app: story-app-1a vs story-app-1b) that becomes the OTel service.name via the Instrumentation CR.
+Scene 2, step 1: Start simple. One Knative Service per story. Flagger manages the canary: when a config change is pushed via GitOps, Flagger creates variant B alongside the existing variant A. Same container image, different configuration (e.g., different AI model). The story_name attribute distinguishes them in metrics.
 :::
 
 ## Full Architecture {data-transition="none"}
@@ -221,10 +221,9 @@ There were **two versions** of that story.
 | | Variant A | Variant B |
 |---|---|---|
 | **Tone** | Dry, matter-of-fact | Funny, playful |
-| **Model** | Sonnet 4 | Sonnet 4 |
 
 ::: {.notes}
-The big reveal. The audience didn't know there were two variants. Now show the Datadog dashboard — the funnier variant should have higher satisfaction. Point out that the system was already shifting traffic toward the winner while they were voting.
+The big reveal. The audience didn't know there were two variants. Now show the Datadog dashboard — the funnier variant should have higher satisfaction. Point out that the platform was already shifting traffic toward the winner while they were voting.
 :::
 
 ## {.center data-transition="none"}
@@ -815,8 +814,8 @@ processors:
     trace_statements:
       - context: spanevent
         statements:
-          - set(span.attributes["score.label"],
-                attributes["score.label"])
+          - set(span.attributes["gen_ai.evaluation.score.label"],
+                attributes["gen_ai.evaluation.score.label"])
             where name == "gen_ai.evaluation.result"
 ```
 
@@ -846,18 +845,19 @@ The spanmetrics connector reads the promoted attributes on each span and produce
 
 ## The Spanmetrics Connector {data-transition="none"}
 
-```{.yaml code-line-numbers="|2-3|4-6|7"}
+```{.yaml code-line-numbers="|2-3|4-7|8"}
 connectors:
   spanmetrics:
     namespace: gen_ai
     dimensions:
       - name: gen_ai.evaluation.score.label
+      - name: story.name
       - name: story.part
     metrics_flush_interval: 15s
 ```
 
 ::: {.notes}
-Walk through the real YAML. First highlight: spanmetrics connector with namespace gen_ai (produces metric gen_ai_calls_total). Second highlight: dimensions — these are the promoted attributes from the transform step. Third highlight: flush every 15 seconds. The result is a counter metric with dimensions for service_name, score.label, and story.part.
+Walk through the real YAML. First highlight: spanmetrics connector with namespace gen_ai (produces metric gen_ai_calls_total). Second highlight: dimensions — these are the promoted attributes from the transform step, plus story.name to distinguish variants. Third highlight: flush every 15 seconds. The result is a counter metric with dimensions for story_name, score.label, and story.part.
 :::
 
 ## The Collector Pipeline {data-transition="none"}
@@ -955,10 +955,10 @@ Datadog receives traces and metrics via separate pipelines (datadog exporter + d
 ## Flagger's Canary Logic
 
 <!-- TODO (M6): Incremental Flagger decision loop diagram -->
-<!-- Build 1: Prometheus scrapes gen_ai_calls_total every 3s -->
-<!-- Build 2: Flagger runs PromQL: (B thumbs_up %) - (A thumbs_up %) -->
-<!-- Build 3: Delta >= 5pp for 3 consecutive checks → advance traffic weight by 10% -->
-<!-- Build 4: Traffic split progression: 90/10 → 80/20 → ... → 0/100 -->
+<!-- Build 1: Prometheus scrapes gen_ai_calls_total -->
+<!-- Build 2: Flagger runs PromQL every 10s: (B thumbs_up %) - (A thumbs_up %) using story_name label -->
+<!-- Build 3: Delta >= 5pp for 5 consecutive checks → advance traffic weight by 10% -->
+<!-- Build 4: Traffic split progression: 90/10 → 80/20 → ... → 0/100 (~100s full rollout) -->
 <!-- Build 5: Delta drops below threshold → rollback to 100% A -->
 
 ::: {.notes}
@@ -982,7 +982,7 @@ This time: **two different models**, same tone.
 One is cheap. One is expensive. Which one do you prefer?
 
 ::: {.notes}
-PRESENTER CUE: The audience now understands the infrastructure from the teaching scenes. Frame this round differently — they know their votes control the rollout. The tension is real: does the expensive model actually produce better stories? Variants: 2a (Haiku 4.5, cheap) vs 2b (Opus 4.6, expensive), same tone. The outcome is genuinely unknown.
+PRESENTER CUE: The audience now understands the infrastructure from the teaching scenes. Frame this round differently — they know their votes control the rollout. The tension is real: does the expensive model actually produce better stories? Same tone on both variants, different models (cheap vs expensive). The outcome is genuinely unknown.
 :::
 
 ## Time to Vote — Again! {.center}
@@ -1008,10 +1008,10 @@ PRESENTER CUE: Click the link to open the Datadog dashboard in TV mode. This tim
 | | Variant A | Variant B |
 |---|---|---|
 | **Tone** | Same | Same |
-| **Model** | Haiku 4.5 (cheap) | Opus 4.6 (expensive) |
+| **Model** | Cheap | Expensive |
 
 ::: {.notes}
-Reveal the model difference. Show the Datadog dashboard results. The expensive model might not have won — that's the point.
+Reveal the model difference. Show the Datadog dashboard results. The expensive model might not have won — that's the point. (Model names TBD — Thomas changing to Anthropic big vs Mistral small.)
 :::
 
 ## {.center data-transition="none"}

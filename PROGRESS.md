@@ -60,3 +60,11 @@ Development progress log for kubecon-2026-gitops. Tracks implementation mileston
 ### Changed
 - (2026-03-14) Extensive style refinements: teal accent theme, progressive reveals with data-transition=none, LR architecture diagrams, Scene 1 split into What You'll See / What You Don't See, removed spoilers before voting, decorative PNG images (resized to 800px)
 - (2026-03-15) Removed Scene/Round prefixes from all slide headings, removed block-beta "What's Linked" slide (replaced by sequence diagram)
+
+### Changed
+- (2026-03-21) Slide corrections for Thomas's Java/Spring Boot rewrite (PRD #5, M1):
+  - Removed Sonnet 4/Haiku 4.5/Opus 4.6 model references; Round 2 uses Cheap/Expensive placeholders
+  - Architecture: one Knative Service + Flagger canary (not two separate services)
+  - Metric labels: service_name → story_name throughout
+  - Spanmetrics YAML: added story.name dimension; Transform YAML: full attribute names
+  - Canary timing updated to 10s interval, threshold 5 (matching current manifests)

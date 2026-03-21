@@ -7,4 +7,4 @@ spec:
   image: ghcr.io/thomasvitale/scaling-on-satisfaction:f59ceb9f63e5b07d3c003bd5479c088a5cea80b3
   story:
     theme: MOON
-    variant: A
+    variant: B

@@ -250,6 +250,9 @@ spec:
               - type: FromCompositeFieldPath
                 fromFieldPath: metadata.namespace
                 toFieldPath: spec.analysis.metrics[0].templateRef.namespace
+            # Canary has no Ready condition — mark it ready as soon as it exists.
+            readinessChecks:
+              - type: MatchTrue
 
           # ── 3. Flagger MetricTemplate ───────────────────────────────────────
           - name: metric-template
@@ -310,3 +313,6 @@ spec:
                       ) * 100
                       or on() vector(0)
                 toFieldPath: spec.query
+            # MetricTemplate has no Ready condition — mark it ready as soon as it exists.
+            readinessChecks:
+              - type: MatchTrue

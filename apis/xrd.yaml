@@ -13,6 +13,13 @@ spec:
     - name: v1alpha1
       served: true
       referenceable: true
+      additionalPrinterColumns:
+        - name: image
+          type: string
+          jsonPath: ".status.image"
+        - name: url
+          type: string
+          jsonPath: ".status.url"
       schema:
         openAPIV3Schema:
           type: object

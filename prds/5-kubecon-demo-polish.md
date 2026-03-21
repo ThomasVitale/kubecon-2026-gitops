@@ -43,11 +43,11 @@ Update all presentation assets to match current architecture and agreed talk flo
 - [x] Fix container image references (ghcr.io/thomasvitale, not wiggitywhitney Docker Hub)
 
 ### M2: Slide Restructuring
-- [ ] Reorder slides to match agreed flow: premise → demo 1 → how it works → demo 2 → end credits
+- [x] Reorder slides to match agreed flow: premise → demo 1 → app explanation → how it works → demo 2 → end credits
 - [ ] Add speaker introductions at end (end credits slide)
-- [ ] Complete Flagger canary logic slides (M6 TODO currently in deck) — Thomas's section
-- [ ] Update "The Reveal" tables with correct variant descriptions
-- [ ] Update speaker notes and presenter cues to reflect new flow
+- [x] ~~Complete Flagger canary logic slides~~ — Thomas owns new slides; leave TODO in deck for him
+- [x] Update "The Reveal" tables with correct variant descriptions
+- [ ] Update speaker notes and presenter cues to reflect new flow (WHITNEY/THOMAS PRESENTS markers)
 
 ### M3: Dashboard Design
 - [ ] Map which dashboards appear at which talk moment:
@@ -66,8 +66,8 @@ Update all presentation assets to match current architecture and agreed talk flo
 - [ ] Verify dashboards populate correctly with live cluster data (requires Thomas's cluster)
 
 ### M5: QR Code Integration
-- [ ] Generate QR codes for story-app-1 and story-app-2 live URLs
-- [ ] Integrate QR codes into demo slides (replacing "generate QR code in Chrome" presenter cue)
+- [x] Generate QR codes for story-app-1 and story-app-2 live URLs
+- [x] Integrate QR codes into demo slides (replacing "generate QR code in Chrome" presenter cue)
 - [ ] Verify QR codes scan correctly on mobile devices
 
 ### M6: Journey of a Thumbs Up Investigation

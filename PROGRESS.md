@@ -62,6 +62,11 @@ Development progress log for kubecon-2026-gitops. Tracks implementation mileston
 - (2026-03-15) Removed Scene/Round prefixes from all slide headings, removed block-beta "What's Linked" slide (replaced by sequence diagram)
 
 ### Changed
+- (2026-03-21) Slide corrections for Thomas's Java/Spring Boot rewrite (PRD #5, M1): model names, architecture diagrams, metric labels, collector YAML, canary timing
+- (2026-03-21) Slide restructure (PRD #5, M2): premise slides → demo 1 before app explanation → removed redundant "What You'll See/Don't See" → added Knative subgraph to all architecture diagrams
+- (2026-03-21) QR codes for story-app-1 and story-app-2 integrated into vote slides (PRD #5, M5)
+
+### Changed
 - (2026-03-21) Slide corrections for Thomas's Java/Spring Boot rewrite (PRD #5, M1):
   - Removed Sonnet 4/Haiku 4.5/Opus 4.6 model references; Round 2 uses Cheap/Expensive placeholders
   - Architecture: one Knative Service + Flagger canary (not two separate services)

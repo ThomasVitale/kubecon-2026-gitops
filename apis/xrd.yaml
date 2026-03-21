@@ -14,9 +14,6 @@ spec:
       served: true
       referenceable: true
       additionalPrinterColumns:
-        - name: image
-          type: string
-          jsonPath: ".status.image"
         - name: url
           type: string
           jsonPath: ".status.url"

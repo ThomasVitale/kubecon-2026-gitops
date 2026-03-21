@@ -19,23 +19,6 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: flagger
-  namespace: kadras-system
-spec:
-  interval: 1m
-  retryInterval: 1m
-  timeout: 5m
-  sourceRef:
-    kind: GitRepository
-    name: gitops-configurer
-  path: ./infrastructure/flagger
-  prune: true
-  wait: true
-
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
   name: database
   namespace: kadras-system
 spec:

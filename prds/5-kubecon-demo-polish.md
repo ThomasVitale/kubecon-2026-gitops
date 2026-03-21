@@ -49,38 +49,40 @@ Update all presentation assets to match current architecture and agreed talk flo
 - [x] Update "The Reveal" tables with correct variant descriptions
 - [ ] Update speaker notes and presenter cues to reflect new flow (WHITNEY/THOMAS PRESENTS markers)
 
-### M3: Dashboard Design
-- [ ] Map which dashboards appear at which talk moment:
-  - Demo 1 voting: live satisfaction scores per variant
-  - Whitney's OTel section: trace/span event view (may use existing APM link)
-  - Thomas's Flagger section: canary progression, PromQL metric visualization
-  - Demo 2 voting: real-time traffic split + canary rollout progression
-- [ ] Identify which Flagger and Knative metrics are available in Datadog
-- [ ] Decide: update existing dashboard (`68y-xeg-j6s`) vs. create separate dashboards per talk moment
+### M3: Dashboard Design ✅
+- [x] Map which dashboards appear at which talk moment:
+  - Both demos: combined dashboard with Flagger traffic weight + votes + canary status
+  - Whitney's OTel section: APM trace link (already in slides)
+  - Thomas's Flagger section: same combined dashboard
+- [x] Identify which Flagger and Knative metrics are available in Datadog
+- [x] Decide: update existing dashboard (`68y-xeg-j6s`) — single combined dashboard for all moments
 
 ### M4: Dashboard Implementation
-- [ ] Create/update Datadog dashboards per the design from M3
-- [ ] Add Flagger canary progression widgets (step weight, threshold, rollback events)
-- [ ] Add Knative traffic split visualization (% traffic to primary vs canary)
-- [ ] Add real-time rollout timeline widget for demo moments
+- [x] Create/update Datadog dashboards per the design from M3
+- [x] Add Flagger canary progression widgets (traffic weight over time, promotion status table, weight big numbers)
+- [x] Add Knative traffic split visualization (primary vs canary weight timeseries + area charts)
+- [x] Add real-time rollout timeline widget for demo moments
 - [ ] Verify dashboards populate correctly with live cluster data (requires Thomas's cluster)
 
-### M5: QR Code Integration
+### M5: QR Code Integration ✅
 - [x] Generate QR codes for story-app-1 and story-app-2 live URLs
 - [x] Integrate QR codes into demo slides (replacing "generate QR code in Chrome" presenter cue)
-- [ ] Verify QR codes scan correctly on mobile devices
+- [x] Verify QR codes scan correctly on mobile devices
 
 ### M6: Journey of a Thumbs Up Investigation
 - [ ] Review sequence diagram against Java/Spring Boot OTel behavior
 - [ ] Hypothesize what's different (spanContext propagation, span event attachment, auto-instrumentation differences)
-- [ ] Get error details from Thomas and diagnose
+- [x] Get error details from Thomas and diagnose
 - [ ] Update sequence diagram slides if the telemetry flow has changed
+
+**Thomas's rendering error (diagnosed 2026-03-21):**
+The "Journey of a 👍" sequence diagram slides (pages 29-40) render as raw Mermaid CSS instead of SVG diagrams on Thomas's machine. Participant labels appear but no diagram content. Thomas is on macOS, installed `chrome-headless-shell` extension (not `chromium`). Reproduced in Brave, Vivaldi, Firefox, and Safari — all show the same broken output. The issue is server-side Mermaid SVG rendering (`mermaid-format: svg`), not the viewing browser. **Fix**: Thomas needs `quarto install chromium` (full Chromium, not chrome-headless-shell), or switch to `mermaid-format: js` (renders in browser instead of at build time).
 
 ## Dependencies
 
 - **Thomas's model change**: M1 slide corrections for model names depend on Thomas confirming final model choices (Anthropic big vs Mistral small)
 - **Thomas's cluster**: M4 dashboard verification requires live data flowing through the cluster
-- **Thomas's error report**: M6 investigation needs Thomas's error details for the thumbs-up journey
+- **Thomas's Chromium**: M6 fix requires Thomas to install `quarto install chromium` or switch `mermaid-format: js`
 
 ## Success Criteria
 

@@ -56,6 +56,11 @@ spec:
                               secretKeyRef:
                                 name: mistral-ai
                                 key: api-key
+                          - name: ANTHROPIC_API_KEY
+                            valueFrom:
+                              secretKeyRef:
+                                name: anthropic
+                                key: api-key
                           - name: SPRING_DATASOURCE_URL
                             valueFrom:
                               secretKeyRef:

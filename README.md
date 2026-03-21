@@ -10,7 +10,7 @@ In this session, Whitney and Thomas demo a platform that enables app developers 
 
 You’ll see how this technique can be applied beyond GenAI, and take part in an interactive story that evolves and changes course in real time based on your feedback!
 
-## Development environment
+## Development environment (recommended)
 
 This project uses [Flox](https://flox.dev/) to manage the development and build environment via [Nix](https://nixos.org). After [installing](https://flox.dev/docs/install-flox/install/) the Flox CLI (open-source), activate the environment:
 

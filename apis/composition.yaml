@@ -51,8 +51,8 @@ spec:
                             value: "none"
                           - name: OTEL_METRICS_EXPORTER
                             value: "none"
-                          - name: OTEL_EXPORTER_OTLP_TRACES_HEADERS
-                            value: "dd-otlp-source=llmobs"
+                          # - name: OTEL_EXPORTER_OTLP_TRACES_HEADERS
+                          #   value: "dd-otlp-source=llmobs"
                           - name: MISTRAL_AI_API_KEY
                             valueFrom:
                               secretKeyRef:

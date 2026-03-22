@@ -31,6 +31,9 @@ spec:
                   type: object
                   description: Story configuration for the app.
                   properties:
+                    name:
+                      description: The name of the story.
+                      type: string
                     theme:
                       description: The story theme. Either MOON or CIRCUS.
                       type: string
@@ -44,6 +47,7 @@ spec:
                         - A
                         - B
                   required:
+                    - name
                     - theme
                     - variant
               required:

@@ -7,5 +7,6 @@ metadata:
 spec:
   image: ghcr.io/thomasvitale/scaling-on-satisfaction:9de69a19b0dd170f7e9ae79a792b77e93ab90a53
   story:
+    name: story-app-2
     theme: CIRCUS
     variant: A

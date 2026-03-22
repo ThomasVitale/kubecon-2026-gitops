@@ -2,11 +2,10 @@
 apiVersion: apps.kadras.io/v1alpha1
 kind: StoryApp
 metadata:
-  name: story-app-moon
+  name: story-app-1
   namespace: apps
 spec:
-  image: ghcr.io/thomasvitale/scaling-on-satisfaction:9de69a19b0dd170f7e9ae79a792b77e93ab90a53
+  image: ghcr.io/thomasvitale/scaling-on-satisfaction:db5f61de20b01be1048d2043557d62d6ec88e724
   story:
-    name: story-app-1
     theme: MOON
-    variant: B
+    variant: A

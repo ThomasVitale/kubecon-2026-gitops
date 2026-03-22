@@ -296,10 +296,10 @@ spec:
               - type: CombineFromComposite
                 combine:
                   variables:
-                    - fromFieldPath: spec.story.name
-                    - fromFieldPath: spec.story.name
-                    - fromFieldPath: spec.story.name
-                    - fromFieldPath: spec.story.name
+                    - fromFieldPath: metadata.name
+                    - fromFieldPath: metadata.name
+                    - fromFieldPath: metadata.name
+                    - fromFieldPath: metadata.name
                   strategy: string
                   string:
                     fmt: |

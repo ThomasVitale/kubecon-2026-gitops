@@ -221,15 +221,15 @@ spec:
                 analysis:
                   interval: 30s
                   threshold: 10
-                  stepWeights: [20, 30, 40, 50, 60, 70, 80, 90, 100]
+                  stepWeights: [20, 40, 50, 70, 80, 90, 100]
                   metrics:
                     - name: ""
                       templateRef:
                         name: ""
                         namespace: ""
                       thresholdRange:
-                        min: 5
-                      interval: 2m
+                        min: 1
+                      interval: 1m
             patches:
               # Set the Canary name to the XR name (no random suffix)
               - type: FromCompositeFieldPath
@@ -290,8 +290,11 @@ spec:
                       type: Format
                       fmt: "satisfaction-score-rate-%s"
 
-              # Build the full PromQL query, embedding {name}b (canary) and
-              # {name}a (primary) via four %s placeholders.
+              # Build the full PromQL query using net satisfaction:
+              #   net_satisfaction = (thumbs_up - thumbs_down) / total
+              # Score = (canary_net - primary_net) * 100
+              # This makes thumbs-down on primary a positive signal for canary.
+              # Uses six %s placeholders: 3 for canary ({name}b), 3 for primary ({name}a).
               # The {{ interval }} placeholder is left intact for Flagger to fill.
               - type: CombineFromComposite
                 combine:
@@ -300,33 +303,50 @@ spec:
                     - fromFieldPath: metadata.name
                     - fromFieldPath: metadata.name
                     - fromFieldPath: metadata.name
+                    - fromFieldPath: metadata.name
+                    - fromFieldPath: metadata.name
                   strategy: string
                   string:
                     fmt: |
                       (
-                        sum(rate(gen_ai_calls_total{
-                          span_name="evaluate UserSatisfaction",
-                          story_name="%sb",
-                          gen_ai_evaluation_score_label="thumbs_up"
-                        }[{{ interval }}]))
+                        (
+                          (sum(rate(gen_ai_calls_total{
+                            span_name="evaluate UserSatisfaction",
+                            story_name="%sb",
+                            gen_ai_evaluation_score_label="thumbs_up"
+                          }[{{ interval }}])) or on() vector(0))
+                          -
+                          (sum(rate(gen_ai_calls_total{
+                            span_name="evaluate UserSatisfaction",
+                            story_name="%sb",
+                            gen_ai_evaluation_score_label="thumbs_down"
+                          }[{{ interval }}])) or on() vector(0))
+                        )
                         /
-                        (sum(rate(gen_ai_calls_total{
+                        ((sum(rate(gen_ai_calls_total{
                           span_name="evaluate UserSatisfaction",
                           story_name="%sb"
-                        }[{{ interval }}])) > 0)
+                        }[{{ interval }}])) > 0) or on() vector(1))
                         -
-                        sum(rate(gen_ai_calls_total{
-                          span_name="evaluate UserSatisfaction",
-                          story_name="%sa",
-                          gen_ai_evaluation_score_label="thumbs_up"
-                        }[{{ interval }}]))
+                        (
+                          (sum(rate(gen_ai_calls_total{
+                            span_name="evaluate UserSatisfaction",
+                            story_name="%sa",
+                            gen_ai_evaluation_score_label="thumbs_up"
+                          }[{{ interval }}])) or on() vector(0))
+                          -
+                          (sum(rate(gen_ai_calls_total{
+                            span_name="evaluate UserSatisfaction",
+                            story_name="%sa",
+                            gen_ai_evaluation_score_label="thumbs_down"
+                          }[{{ interval }}])) or on() vector(0))
+                        )
                         /
-                        (sum(rate(gen_ai_calls_total{
+                        ((sum(rate(gen_ai_calls_total{
                           span_name="evaluate UserSatisfaction",
                           story_name="%sa"
-                        }[{{ interval }}])) > 0)
+                        }[{{ interval }}])) > 0) or on() vector(1))
                       ) * 100
-                      or on() vector(0)
                 toFieldPath: spec.query
             # MetricTemplate has no Ready condition — mark it ready as soon as it exists.
             readinessChecks:

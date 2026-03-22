@@ -11,7 +11,7 @@ title-slide-attributes:
 <p style="font-size: 1.3em;">When AI-generated text goes straight to users, how do you know whether it is good?</p>
 
 ::: {.notes}
-Premise slide 1. With traditional apps, you can measure quality deterministically — response time, error rates, status codes, schema validation, latency percentiles. You can write assertions against all of these. But when the output is AI-generated text, none of that tells you whether the content is actually good. Quality is subjective.
+With traditional apps, you can measure quality deterministically — response time, error rates, status codes, etc. But when the output is AI-generated, none of that tells you whether the content is actually good. Quality is subjective. So how do you know that the GenAI content that you're putting out into the world is good?
 :::
 
 ## {.center data-transition="none"}
@@ -19,7 +19,7 @@ Premise slide 1. With traditional apps, you can measure quality deterministicall
 <p style="font-size: 1.8em;">**User feedback.**</p>
 
 ::: {.notes}
-A lot of GenAI apps already collect this. As a user, you can probably think of a time you used a GenAI tool or chatbot or something, and it asked you to give a thumbs up or thumbs down to the response.
+User feedback. A lot of GenAI apps already collect this. As a user, you can probably think of a time you used a GenAI tool or chatbot or something, and it asked you to give a thumbs up or thumbs down to the response. So why not...
 :::
 
 ## {.center data-transition="none"}
@@ -27,7 +27,7 @@ A lot of GenAI apps already collect this. As a user, you can probably think of a
 <p style="font-size: 1.3em;">So why not roll out an application change based on whether your users **prefer it**?</p>
 
 ::: {.notes}
-The pitch. If user feedback is the only reliable signal, then use it to drive deployment decisions. This is what we're about to demonstrate live.
+... roll out an app change based on whether your users prefer it? If user feedback is the only reliable signal, then use it to drive deployment decisions. 
 :::
 
 # Live Demo {.center}
@@ -35,10 +35,10 @@ The pitch. If user feedback is the only reliable signal, then use it to drive de
 <img src="images/Flat_Zigzag_Yellow_Pink.png" width="200" style="position: absolute; top: -40px; right: -30px; transform: rotate(0deg); opacity: 0.7;">
 
 ::: {.notes}
-Section divider: Round 1 Live Demo. Audience experiences the app for the first time with zero context.
+But you don't have to take our word for it. Let's jump right in and do a live demo of an application rollout based on user feedback. At first, most of you will receive an older version of an app that tells a story in 5 parts. We're rolling out a version that we think you'll like better. But it will only roll out if your votes confirm our hypothesis.
 :::
 
-## Let's Try It
+## Do the thing!
 
 You're about to read a short AI-generated story.
 
@@ -49,7 +49,6 @@ That's it. Just read and react.
 <img src="images/Black_Line_Yellow_Bulb.png" width="300" style="position: absolute; bottom: -50px; right: -30px; transform: rotate(-6deg);">
 
 ::: {.notes}
-PRESENTER CUE: Keep this simple — don't reveal that there are two variants or what the difference is. The audience should just experience the app naturally. Switch to the Datadog dashboard on screen, THEN reveal the URL. The reveal of dry vs funny comes AFTER voting, in the debrief slide.
 :::
 
 ## Time to Vote! {.center}
@@ -59,7 +58,7 @@ PRESENTER CUE: Keep this simple — don't reveal that there are two variants or 
 Read each story part. Vote thumbs up or thumbs down.
 
 ::: {.notes}
-PRESENTER CUE: QR code goes to story-app-1. Advance story parts from the admin panel as votes come in. Let 2-3 story parts play out (~3-4 minutes). When ready, click through to the dashboard slide.
+The application change is rolling out over 4 minutes. Every 30 seconds Flagger evaluates whether the new version is performing better than the old version, and if so, it sends more traffic to the new version.
 :::
 
 ## [Live Dashboard](https://app.datadoghq.com/dashboard/68y-xeg-j6s?tv_mode=true) {.center}
@@ -69,19 +68,16 @@ Watch the votes come in:
 **[Open Datadog Dashboard](https://app.datadoghq.com/dashboard/68y-xeg-j6s?tv_mode=true)**
 
 ::: {.notes}
-PRESENTER CUE: Click the link to open the Datadog dashboard in TV mode. This shows votes per variant and satisfaction rates updating in real time. Stay on this while the audience votes. The dashboard URL is: https://app.datadoghq.com/dashboard/68y-xeg-j6s?tv_mode=true
 :::
 
-## The Reveal
-
-There were **two versions** of that story.
+## There were **two versions** of that story.
 
 | | Variant A | Variant B |
 |---|---|---|
-| **Tone** | Dry, matter-of-fact | Funny, playful |
+| **Tone** | Dry | Playful |
 
 ::: {.notes}
-The big reveal. The audience didn't know there were two variants. Now show the Datadog dashboard — the funnier variant should have higher satisfaction. Point out that the platform was already shifting traffic toward the winner while they were voting.
+Did you put it together? One app told the story in a straightforward, matter-of-fact manner and the prompt of the app we rolled out instructed the LLM to write a funny and playful story.
 :::
 
 ## {.center data-transition="none"}
@@ -89,60 +85,12 @@ The big reveal. The audience didn't know there were two variants. Now show the D
 <p style="font-size: 1.3em;">The platform **shifted traffic** toward the variant you liked more.</p>
 
 ::: {.notes}
-Transition to teaching scenes. The audience just experienced the feedback loop. Now we pull back the curtain and explain every component.
 :::
 
 # The App {.center}
 
 ::: {.notes}
-Section divider: Now we explain what the audience just experienced.
-:::
-
-## {.spaced data-transition="none"}
-
-We started with 100% traffic going to the boring version
-
-::: {.notes}
-Everyone was on variant A — the dry, matter-of-fact storyteller.
-:::
-
-## {.spaced data-transition="none"}
-
-We started with 100% traffic going to the boring version
-
-Then we introduced a funny version
-
-::: {.notes}
-Then variant B — the funny version — was deployed alongside it.
-:::
-
-## {.spaced data-transition="none"}
-
-We started with 100% traffic going to the boring version
-
-Then we introduced a funny version
-
-If its likeability performed better, it got **rolled out**
-
-::: {.notes}
-The platform used their votes to decide whether to shift traffic. Now show the architecture.
-:::
-
-## Two Apps, One Stage {data-transition="none"}
-
-```{mermaid}
-%%| fig-width: 10
-flowchart LR
-  subgraph knative ["Knative Service: story-app-1"]
-    A["Variant A<br/>story-app-1a"] ~~~ B["Variant B<br/>story-app-1b"]
-  end
-  style knative fill:none,stroke:#00897B,stroke-width:2px
-```
-
-Same container image, **different configuration** — Flagger manages the canary
-
-::: {.notes}
-Scene 2, step 1: Start simple. One Knative Service per story. Flagger manages the canary: when a config change is pushed via GitOps, Flagger creates variant B alongside the existing variant A. Same container image, different configuration (e.g., different AI model). The story_name attribute distinguishes them in metrics.
+Let's talk about what's going on at the app-level that helps to enable this.
 :::
 
 ## Full Architecture {data-transition="none"}
@@ -168,7 +116,7 @@ flowchart LR
   linkStyle 5 stroke:none
 ```
 
-Each story part, you might get **A or B** — it can switch mid-story
+Each story part, a user might get **A or B**
 
 ::: {.notes}
 This isn't a static A/B test. You might get variant A for part 1 and variant B for part 3 — it depends on which variant is winning.
@@ -197,7 +145,7 @@ flowchart LR
 Both variants send telemetry to the same **OTel Collector**
 
 ::: {.notes}
-Every vote, every story generation creates spans and span events. They all flow to the same collector, which is how we can compare the two variants.
+Every vote, every story generation creates spans and span events. They all flow to the same OpenTelemetry collector, which is how we can compare the two variants. I'll talk more about the collector in a bit.
 :::
 
 ## Full Architecture {data-transition="none"}
@@ -221,7 +169,7 @@ flowchart LR
 The collector turns telemetry into **comparable metrics**
 
 ::: {.notes}
-Specifically, thumbs up percentage per variant. The platform (Flagger) watches these metrics.
+Specifically, thumbs up percentage per variant. The platform (Flagger) watches these metrics. Thomas will go over Flagger in a bit.
 :::
 
 ## Full Architecture {data-transition="none"}
@@ -241,15 +189,15 @@ flowchart LR
   style knative fill:none,stroke:#00897B,stroke-width:2px
 ```
 
-The platform uses those metrics to **roll out the more popular variant**
+The platform uses those metrics to decide whether to **roll out the new variant** or let it die
 
 ::: {.notes}
-The platform shifts traffic toward whichever variant has higher satisfaction. This is the feedback loop — audience votes become telemetry, telemetry becomes metrics, metrics drive the rollout, and the audience gets more of the variant they prefer. We'll dig into each of these steps after Round 1.
+One variant is already the primary — it's fully rolled out. The new variant is the challenger. If it performs better, the platform promotes it. If not, it gets rolled back. Audience votes become telemetry, telemetry becomes metrics, metrics drive the decision.
 :::
 
-# How It Works {.center}
+# From Votes to Metrics {.center}
 
-<img src="images/Isometric_Grid_Green_Pink.png" width="250" style="position: absolute; bottom: -50px; right: -30px; transform: rotate(12deg); opacity: 0.8;">
+<img src="images/Flat_Zigzag_Green_Purple.png" width="250" style="position: absolute; bottom: -50px; right: -30px; transform: rotate(12deg); opacity: 0.8;">
 
 ::: {.notes}
 Section divider: Teaching scenes. Now we explain the infrastructure behind what they just experienced.
@@ -270,7 +218,7 @@ graph TD
 ```
 
 ::: {.notes}
-Start simple. The user taps thumbs up. What happens inside the server?
+When you tap thumbs up, what happens inside the server?
 :::
 
 ## The Server Creates a Span {data-transition="none"}
@@ -290,7 +238,7 @@ graph TD
 The server creates an **OpenTelemetry span** — a unit of work
 
 ::: {.notes}
-First mention of OpenTelemetry. A span is a structured unit of work — connected to other spans in a trace. The server creates one called "evaluate UserSatisfaction" every time someone votes.
+The server creates an **OpenTelemetry span**. A span is a structured unit of work. Spans connect to other spans in a trace. The server creates one called "evaluate UserSatisfaction" every time someone votes.
 :::
 
 ## The Vote Creates a Span Event {data-transition="none"}
@@ -308,10 +256,8 @@ graph TD
   style otel fill:none,stroke:#00897B,stroke-width:2px
 ```
 
-The vote is recorded as a **span event** inside the span
-
 ::: {.notes}
-The span event appears as a child of the span. It's called gen_ai.evaluation.result and it carries the vote data. The audience sees the visual relationship before we explain what a span event is.
+The vote is recorded as a span event inside the span. The span event appears as a child of the span. It's called gen_ai.evaluation.result and it carries the vote data.
 :::
 
 ## {.center data-transition="none"}
@@ -319,7 +265,6 @@ The span event appears as a child of the span. It's called gen_ai.evaluation.res
 <h2 style="font-size: 1.8em;">What's a span event?</h2>
 
 ::: {.notes}
-Pause here. Let the question land. Most people think OTel = spans and metrics. Span events are the underused third concept.
 :::
 
 ## {.center data-transition="none"}
@@ -331,22 +276,26 @@ Pause here. Let the question land. Most people think OTel = spans and metrics. S
 <p style="font-size: 1.3em;">Automatically correlated with the trace</p>
 
 ::: {.notes}
-A span event is a thing that happened during a span — like a log entry, but it lives inside the span, so you get trace context for free. No manual correlation needed.
+A span event is a thing that happened at a specific time during a span. It is basically a log that lives inside the span, so you get trace context without having to manually add correlation.
+
+Fun fact: the OpenTelemetry community deprecated the Span Events API literally last week. The replacement is log-based events via the Logs API. The data and the correlation are the same.
 :::
 
 ## Semantic Conventions {.center data-transition="none"}
 
 <p style="font-size: 1.3em; margin-bottom: 1em;">**gen_ai semantic conventions**</p>
 
-<p style="font-size: 1.1em;">A standard vocabulary — not custom fields</p>
+<p style="font-size: 1.1em;">A standard vocabulary</p>
 
 <p style="font-size: 1.1em;">Any OTel-compatible tool knows what these mean</p>
 
 ::: {.notes}
-This is the "why should I care" beat. The attributes on the span event aren't made up — they follow gen_ai semantic conventions. score.label = thumbs_up, score.value = 1.0, story.part = 3. Because these are standardized, any OTel tool (Datadog, Jaeger, Grafana) can read and act on them without custom configuration.
+Because these are standardized, any OpenTelemetry tool (Datadog, Jaeger, Grafana) can read and act on them without custom configuration.
+
+The user.id v user-id v userId v user_id example.
 :::
 
-## The Journey of a 👍 {data-transition="fade"}
+## The Journey of a 👍 {.center data-transition="fade"}
 
 ![](images/swim-lanes/journey-21.png){.r-stretch}
 
@@ -354,7 +303,7 @@ This is the "why should I care" beat. The attributes on the span event aren't ma
 Empty diagram — just the four participants. Fade transition from the previous flowchart for visual continuity.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-20.png){.r-stretch}
 
@@ -362,7 +311,7 @@ Empty diagram — just the four participants. Fade transition from the previous 
 The server calls the model to generate a story part.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-19.png){.r-stretch}
 
@@ -370,7 +319,7 @@ The server calls the model to generate a story part.
 This is wrapped in a storygen span — the activate bar shows the span is open while we wait for the model.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-18.png){.r-stretch}
 
@@ -378,7 +327,7 @@ This is wrapped in a storygen span — the activate bar shows the span is open w
 The model responds with the story part. The storygen span closes — it now contains the model name and response ID.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-17.png){.r-stretch}
 
@@ -386,7 +335,7 @@ The model responds with the story part. The storygen span closes — it now cont
 The storygen span wraps the model call. After it closes, the server sends the story plus the spanContext to the phone. The spanContext is the token that will link everything together later.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-16.png){.r-stretch}
 
@@ -394,7 +343,7 @@ The storygen span wraps the model call. After it closes, the server sends the st
 The user reads the story. The phone is holding onto the spanContext this whole time.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-15.png){.r-stretch}
 
@@ -402,7 +351,7 @@ The user reads the story. The phone is holding onto the spanContext this whole t
 The user taps thumbs up. The teal box now shows the thumbs up emoji.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-14.png){.r-stretch}
 
@@ -410,7 +359,7 @@ The user taps thumbs up. The teal box now shows the thumbs up emoji.
 The phone sends the vote AND the spanContext back to the server. The spanContext has round-tripped: server to phone and back.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-13.png){.r-stretch}
 
@@ -418,7 +367,7 @@ The phone sends the vote AND the spanContext back to the server. The spanContext
 The server creates the evaluate satisfaction span, links it to the storygen span using the spanContext.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-12.png){.r-stretch}
 
@@ -426,7 +375,7 @@ The server creates the evaluate satisfaction span, links it to the storygen span
 The span event with the vote data lives inside the evaluate satisfaction span.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-11.png){.r-stretch}
 
@@ -436,7 +385,7 @@ The span event with the vote data lives inside the evaluate satisfaction span.
 Everything flows to the OTel Collector via OTLP. The spanContext is what links the storygen span to the evaluate satisfaction span.
 :::
 
-## The Journey of a 👍 {data-transition="none"}
+## The Journey of a 👍 {.center data-transition="none"}
 
 ![](images/swim-lanes/journey-10.png){.r-stretch}
 

@@ -5,7 +5,7 @@ metadata:
   name: story-app-1
   namespace: apps
 spec:
-  image: ghcr.io/thomasvitale/scaling-on-satisfaction:db5f61de20b01be1048d2043557d62d6ec88e724
+  image: ghcr.io/thomasvitale/scaling-on-satisfaction:15759c0c8982f3b8922408c3095ac390d42e1cbd
   story:
     theme: MOON
     variant: A

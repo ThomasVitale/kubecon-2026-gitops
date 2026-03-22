@@ -2,11 +2,11 @@
 apiVersion: apps.kadras.io/v1alpha1
 kind: StoryApp
 metadata:
-  name: story-app-circus
+  name: story-app-2
   namespace: apps
 spec:
   image: ghcr.io/thomasvitale/scaling-on-satisfaction:9de69a19b0dd170f7e9ae79a792b77e93ab90a53
   story:
     name: story-app-2
     theme: CIRCUS
-    variant: A
+    variant: B

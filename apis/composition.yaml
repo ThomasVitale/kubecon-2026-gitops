@@ -45,6 +45,9 @@ spec:
                           # index 2 - patched via theme+variant map transform
                           - name: STORY_MODEL
                             value: ""
+                          # index 3 - patched from metadata.name
+                          - name: SPRING_APPLICATION_NAME
+                            value: ""
                           - name: OTEL_EXPORTER_OTLP_ENDPOINT
                             value: "http://otel-collector.observability.svc.cluster.local:4318"
                           - name: OTEL_LOGS_EXPORTER
@@ -170,6 +173,11 @@ spec:
               - type: ToCompositeFieldPath
                 fromFieldPath: status.url
                 toFieldPath: status.url
+
+              # Set SPRING_APPLICATION_NAME from the XR name
+              - type: FromCompositeFieldPath
+                fromFieldPath: metadata.name
+                toFieldPath: spec.template.spec.containers[0].env[3].value
 
               # Set STORY_MODEL by combining theme+variant into a key and mapping:
               #   MOON+A  -> LARGE  (MOON always uses LARGE model)

@@ -54,6 +54,10 @@ spec:
           peer_tags_aggregation: true
       spanmetrics:
         namespace: gen_ai
+        include:
+          match_type: strict
+          span_names:
+            - "evaluate UserSatisfaction"
         histogram:
           explicit:
             buckets: [1]

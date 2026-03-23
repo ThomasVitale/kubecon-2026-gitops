@@ -96,6 +96,14 @@ So we essentially pitted one prompt against an updated prompt.
 
 ## {.center data-transition="none"}
 
+<p style="font-size: 1.3em;">So we talked about how the right **trace data** gets into the collector...</p>
+
+::: {.notes}
+So we talked about how the right **trace data** gets into the collector...
+:::
+
+## {.center data-transition="none"}
+
 <p style="font-size: 1.3em;">The platform **shifted traffic** toward the variant you liked more.</p>
 
 ::: {.notes}
@@ -284,6 +292,8 @@ The vote itself is recorded as a span event inside the span. The span event appe
 A span event is a thing that happened at a specific time during a span. It is basically a log that lives inside the span, so you get trace context without having to manually add correlation.
 
 Fun fact: the OpenTelemetry community deprecated the Span Events API literally last week. The replacement is log-based events via the Logs API. The data and the correlation are the same.
+
+Another important feature of OpenTelemetry that enables this rollout is...
 :::
 
 ## Semantic Conventions {.center data-transition="none"}
@@ -295,9 +305,19 @@ Fun fact: the OpenTelemetry community deprecated the Span Events API literally l
 <p style="font-size: 1.1em;">Any OTel-compatible tool knows what these mean</p>
 
 ::: {.notes}
-Because these are standardized, any OpenTelemetry tool (Datadog, Jaeger, Grafana) can read and act on them without custom configuration.
+...Semantic conventions! 
 
 The user.id v user-id v userId v user_id example.
+
+Because these are standardized, any OpenTelemetry tool (Datadog, Jaeger, Grafana) can read and act on them without custom configuration.
+:::
+
+## Here's What It Looks Like in Practice {.center data-transition="none"}
+
+**[See a real LLM trace in Datadog](https://app.datadoghq.com/llm/traces/trace/4e75d9f0306a4e11beeab2054f88d011?selectedTab=overview&spanId=17445975645256376604)**
+
+::: {.notes}
+Click this link to open an LLM trace in Datadog - these are capuring calls instrumented with OpenTelemetry GenAI semantic conventions
 :::
 
 ## The Journey of a 👍 {.center data-transition="fade"}
@@ -398,22 +418,6 @@ Because of that spanContext token, the 'storygen' span is linked to 'evaluate sa
 
 ::: {.notes}
 OpenTelemetry now has the complete picture: what was generated, by which prompt and which model, and how the user felt about it.
-:::
-
-## Here's What It Looks Like {.center data-transition="none"}
-
-**[See a real trace in Datadog](https://app.datadoghq.com/apm/traces?query=operation_name%3Aevaluate%20UserSatisfaction)**
-
-::: {.notes}
-Click this link to open Datadog APM traces filtered to evaluate satisfaction spans.
-:::
-
-## {.center data-transition="none"}
-
-<p style="font-size: 1.3em;">So we talked about how the right **trace data** gets into the collector...</p>
-
-::: {.notes}
-So we talked about how the right **trace data** gets into the collector...
 :::
 
 ## {.center data-transition="none"}

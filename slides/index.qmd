@@ -27,7 +27,7 @@ User feedback. A lot of GenAI apps already collect this. As a user, you can prob
 <p style="font-size: 1.3em;">Roll out an application change based on whether your users **prefer it**</p>
 
 ::: {.notes}
-... roll out an app change based on whether your users prefer it? If user feedback is the only reliable signal, then use it to drive deployment decisions. 
+... roll out an app change based on whether your users prefer it? If user feedback is the only reliable signal, then use it to drive deployment decisions.
 :::
 
 # Live Demo {.center}
@@ -133,7 +133,7 @@ flowchart LR
 Each story part, a user might get **A or B**
 
 ::: {.notes}
-We did a canary rollout, where, at first, the new, funnier prompt got only 20% of traffic. 
+We did a canary rollout, where, at first, the new, funnier prompt got only 20% of traffic.
 :::
 
 ## Full Architecture {data-transition="none"}
@@ -183,7 +183,7 @@ flowchart LR
 The collector turns telemetry into **comparable metrics**
 
 ::: {.notes}
-The platform (Flagger) watches these metrics. Specifically, it watches the thumbs up percentage per variant. 
+The platform (Flagger) watches these metrics. Specifically, it watches the thumbs up percentage per variant.
 :::
 
 ## Full Architecture {data-transition="none"}
@@ -206,7 +206,7 @@ flowchart LR
 The platform uses those metrics to decide whether to **roll out the new variant** or let it die
 
 ::: {.notes}
-If the new variant (in our case, the playful one) performs better, the platform sends more traffic to it. If not, it automatically gets rolled back. 
+If the new variant (in our case, the playful one) performs better, the platform sends more traffic to it. If not, it automatically gets rolled back.
 
 Flagger polls every 30s and if the playful prompt keeps getting upvoted, Flagger keeps sending a little bit more traffic to it.
 :::
@@ -387,7 +387,7 @@ The span event with the vote data lives inside this 'evaluate satisfaction' span
 ![](images/swim-lanes/journey-11.png){.r-stretch}
 
 ::: {.notes}
-Everything flows to the OTel Collector via OTLP. 
+Everything flows to the OTel Collector via OTLP.
 
 Because of that spanContext token, the 'storygen' span is linked to 'evaluate satisfaction' span, so therefore your vote is correlated to information about what prompt and model were used for the story generation.
 :::
@@ -405,7 +405,7 @@ OpenTelemetry now has the complete picture: what was generated, by which prompt 
 **[See a real trace in Datadog](https://app.datadoghq.com/apm/traces?query=operation_name%3Aevaluate%20UserSatisfaction)**
 
 ::: {.notes}
-Click this link to open Datadog APM traces filtered to evaluate satisfaction spans. 
+Click this link to open Datadog APM traces filtered to evaluate satisfaction spans.
 :::
 
 ## {.center data-transition="none"}
@@ -566,7 +566,7 @@ Processors that **Enrich** spans with Kubernetes pod and node metadata
 
 The collector ecosystem has many processors. These are just a few examples.
 
-You can compose one or many processors into pipelines to shape your telemetry however you need. 
+You can compose one or many processors into pipelines to shape your telemetry however you need.
 :::
 
 ## The Collector Pipeline {data-transition="none"}
@@ -680,10 +680,6 @@ The connector generates additional metrics from traces, and the exporter ships d
 
 <span style="position: absolute; bottom: 20px; right: 40px; font-size: 4em; opacity: 0.8;">🌊</span>
 
-::: {.notes}
-Section divider: The Platform. The cloud native platform that makes the feedback loop possible — Knative Serving, Flagger, and Crossplane.
-:::
-
 ## Cloud Native Platform  {.center data-transition="none"}
 
 ![](images/thomas/platform-1.png){.r-stretch}
@@ -722,122 +718,49 @@ Section divider: The Platform. The cloud native platform that makes the feedback
 
 ## Platform API {.center data-transition="none"}
 
-```{.yaml code-line-numbers="|1-4|6|7-9"}
-apiVersion: apps.kadras.io/v1alpha1
-kind: StoryApp
-metadata:
-  name: story-app
-spec:
-  image: ghcr.io/thomasvitale/scaling-on-satisfaction
-  story:
-    theme: MOON
-    variant: A
-```
+![](images/thomas/platform-api-1.png){.r-stretch}
+
+## Platform API {.center data-transition="none"}
+
+![](images/thomas/platform-api-2.png){.r-stretch}
 
 ## Platform API  {.center data-transition="none"}
 
-![](images/thomas/dev-story-app.png){.r-stretch}
+![](images/thomas/dev-story-app-1.png){.r-stretch}
+
+## Platform API  {.center data-transition="none"}
+
+![](images/thomas/dev-story-app-2.png){.r-stretch}
+
+## Platform API  {.center data-transition="none"}
+
+![](images/thomas/dev-story-app-3.png){.r-stretch}
 
 ## The Canary {.center data-transition="none"}
 
-```{.yaml code-line-numbers="|1-4|5-10|11-23"}
-apiVersion: flagger.app/v1beta1
-kind: Canary
-metadata:
-  name: story-app-moon
-spec:
-  provider: knative
-  targetRef:
-    apiVersion: serving.knative.dev/v1
-    kind: Service
-    name: story-app-moon
-  analysis:
-    interval: 30s
-    metrics:
-    - interval: 2m
-      name: satisfaction-score-rate
-      templateRef:
-        name: satisfaction-score-rate
-        namespace: apps
-      thresholdRange:
-        min: 5
-    maxWeight: 100
-    stepWeight: 10
-    threshold: 10
-```
+![](images/thomas/canary-1.png){.r-stretch}
 
-## The MetricTemplate {.center data-transition="none"}
+## The Canary {.center data-transition="none"}
 
-```{.yaml code-line-numbers="|1-4|5-8|9-33"}
-apiVersion: flagger.app/v1beta1
-kind: MetricTemplate
-metadata:
-  name: satisfaction-score-rate
-spec:
-  provider:
-    address: http://prometheus-prometheus.observability:9090
-    type: prometheus
-  query: |
-    (
-      sum(rate(gen_ai_calls_total{
-        span_name="evaluate UserSatisfaction",
-        story_name="story-app-moon-b",
-        gen_ai_evaluation_score_label="thumbs_up"
-      }[{{ interval }}]))
-      /
-      (sum(rate(gen_ai_calls_total{
-        span_name="evaluate UserSatisfaction",
-        story_name="story-app-moon-b"
-      }[{{ interval }}])) > 0)
-      -
-      sum(rate(gen_ai_calls_total{
-        span_name="evaluate UserSatisfaction",
-        story_name="story-app-moon-a",
-        gen_ai_evaluation_score_label="thumbs_up"
-      }[{{ interval }}]))
-      /
-      (sum(rate(gen_ai_calls_total{
-        span_name="evaluate UserSatisfaction",
-        story_name="story-app-moon-a"
-      }[{{ interval }}])) > 0)
-    ) * 100
-    or on() vector(0)
-```
+![](images/thomas/canary-2.png){.r-stretch}
 
-## One Knative Service, Multiple Revisions {.center data-transition="none"}
+## The Canary {.center data-transition="none"}
 
-```{mermaid}
-%%| fig-width: 10
-flowchart LR
-  audience["Audience"] --> ksvc["Knative Service"]
-  ksvc --> ksvc_a["Revision 1"]
-  ksvc --> ksvc_b["Revision 2"]
-  ksvc --> ksvc_c["Revision 3"]
-  style ksvc fill:#e3f2fd,stroke:#1565C0
-  style ksvc_a fill:#e8f5f3,stroke:#00897B
-  style ksvc_b fill:#e8f5f3,stroke:#00897B
-  style ksvc_c fill:#e8f5f3,stroke:#00897B
-```
+![](images/thomas/canary-3.png){.r-stretch}
 
-# Live Demo {.center}
+## The Canary {.center data-transition="none"}
 
-::: {.notes}
-Section divider: Round 2 Live Demo. Now the audience understands the infrastructure — their votes have new meaning.
-:::
+![](images/thomas/canary-4.png){.r-stretch}
+
+# Story Time {.center}
+
+<span style="position: absolute; bottom: 20px; right: 40px; font-size: 4em; opacity: 0.8;">📖</span>
 
 ## Time to Vote. Again! {.center}
 
-![](images/qr-story-app-2.png){width=400}
+![](images/thomas/qr-story-app-2.png){width=400}
 
-::: {.notes}
-PRESENTER CUE: QR code goes to story-app-2. Advance story parts from the admin panel. Let 2-3 story parts play out (~3-4 minutes). This time, also narrate what's happening: "The platform is watching your votes right now. If one model pulls ahead, traffic will shift."
-:::
-
-## [Live Dashboard](https://app.datadoghq.com/dashboard/68y-xeg-j6s) {.center}
-
-Watch the votes come in:
-
-**[Open Datadog Dashboard](https://app.datadoghq.com/dashboard/68y-xeg-j6s)**
+Watch the votes come in: **[Datadog Dashboard](https://app.datadoghq.com/dashboard/68y-xeg-j6s)**
 
 ::: {.notes}
 :::
@@ -861,7 +784,7 @@ This time, both variants had the same tone. The difference was the model.
 One was cheap. One was expensive.
 
 ::: {.notes}
-Variant A used Mistral Medium — a cheaper model. Variant B used Opus 4.6 — a more expensive model. Did the expensive one win?
+Variant A used Mistral Large — a cheaper and faster model. Variant B used Opus 4.6 — a more expensive and slower model. Did the expensive one win?
 :::
 
 ## {.center data-transition="none"}
@@ -878,21 +801,7 @@ The teaching point: this is how a company decides whether spending more on a pre
 
 # The Full Loop {.center}
 
-<img src="images/Black_Line_Purple_Bulb.png" width="320" style="position: absolute; bottom: -60px; right: -30px; transform: rotate(-7deg);">
-
-::: {.notes}
-Section divider: Scene 6 — Closing the feedback loop. Tie everything together.
-:::
-
-## Closing the Feedback Loop
-
-<!-- TODO (M6): Full architecture diagram with the feedback loop highlighted -->
-<!-- Complete pipeline: Audience votes → App span events → Collector transforms → Prometheus metrics → Flagger queries → Knative traffic split → Audience gets more of the better variant → More votes → ... -->
-
-::: {.notes}
-Scene 6: The Full Loop.
-Show the complete cycle — audience votes are literally controlling the infrastructure. This is a closed-loop system. Subjective user experience (thumbs up/down) drives infrastructure decisions. This is what "scaling on satisfaction" means.
-:::
+<span style="position: absolute; bottom: 20px; right: 40px; font-size: 4em; opacity: 0.8;">💡</span>
 
 ## What We Built Together
 
@@ -921,11 +830,15 @@ Thomas Vitale — software engineer at Systematic, author of Cloud Native Spring
 
 Whitney Lee · Thomas Vitale
 
-<img src="images/Cube_Pink_Yellow_Green.png" width="250" style="position: absolute; bottom: -50px; left: -30px; transform: rotate(22deg);">
-<img src="images/Stripe_Triangle_Yellow_Purple.png" width="220" style="position: absolute; bottom: -40px; right: -30px; transform: rotate(250deg);">
+🦋 [@whitneylee.com](https://bsky.app/profile/whitneylee.com) &nbsp;&nbsp;&nbsp;&nbsp; 🦋 [@thomasvitale.com](https://bsky.app/profile/thomasvitale.com)
 
-<!-- TODO (M7): Links, QR codes, social handles, repo URLs -->
+<br>
 
-::: {.notes}
-Closing slide. Links to repos, slides, social handles. Thank the audience for participating.
-:::
+<p style="font-size: 1.0em; text-align: left; line-height: 1.4;">
+**Platform Source Code**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[github.com/ThomasVitale/kubecon-2026-gitops](https://github.com/ThomasVitale/kubecon-2026-gitops)<br>
+**Application Source Code (Node.js)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[github.com/wiggitywhitney/scaling-on-satisfaction](https://github.com/wiggitywhitney/scaling-on-satisfaction)<br>
+**Application Source Code (Java)**<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[github.com/ThomasVitale/scaling-on-satisfaction](https://github.com/ThomasVitale/scaling-on-satisfaction)
+</p>

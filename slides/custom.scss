@@ -74,7 +74,13 @@ $presentation-h2-font-size: 1.4em;
   line-height: 1.6;
 }
 
-// Center images on .center slides
+// Center images on slides
+.reveal .slides section img.r-stretch {
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
 .reveal .slides section.center p img {
   display: block;
   margin-left: auto;

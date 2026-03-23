@@ -835,16 +835,13 @@ Variant A used Mistral Large — a cheaper and faster model. Variant B used Opus
 The teaching point: this is how a company decides whether spending more on a premium model is worthwhile. Do not assume the expensive option is better — instrument it, measure real user satisfaction, and let the data decide. The infrastructure doesn't care about price tags; it cares about thumbs up.
 :::
 
-# The Full Loop {.center}
+# The Full Loop {.center data-transition="none"}
 
 <span style="position: absolute; bottom: 20px; right: 40px; font-size: 4em; opacity: 0.8;">💡</span>
 
-## What We Built Together
+## What We Built Together {.center data-transition="none"}
 
-- **OpenTelemetry** gen_ai semantic conventions capture user satisfaction
-- **OTel Collector** transforms span events into actionable metrics
-- **Flagger** uses those metrics to make canary deployment decisions
-- **You** drove the infrastructure with your votes
+![](images/thomas/loop.png){.r-stretch}
 
 ::: {.notes}
 Wrap-up slide. Recap the key technologies and the audience's role. Emphasize: this isn't hypothetical — they just did it, live.

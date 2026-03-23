@@ -1,0 +1,56 @@
+<style>
+  .custom-footer {
+    position: absolute;
+    bottom: 1em;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    pointer-events: auto;
+    font-size: 0.6em;
+    z-index: 100;
+  }
+  .custom-footer a {
+    color: #555;
+    text-decoration: none;
+  }
+  .custom-footer a:hover {
+    color: #00897B;
+    text-decoration: underline;
+  }
+  .custom-footer .separator {
+    margin: 0 0.3em;
+    color: #999;
+  }
+</style>
+
+<script>
+  // Move the footer inside Reveal's container so it scales with the presentation
+  // and hide it on the last 3 slides (bio + thank you)
+  document.addEventListener('DOMContentLoaded', function() {
+    var footer = document.querySelector('.custom-footer');
+    var reveal = document.querySelector('.reveal');
+    if (footer && reveal) {
+      reveal.appendChild(footer);
+    }
+
+    function toggleFooter() {
+      var slides = Reveal.getHorizontalSlides();
+      var total = slides.length;
+      var current = Reveal.getState().indexh;
+      if (current >= total - 3) {
+        footer.style.display = 'none';
+      } else {
+        footer.style.display = '';
+      }
+    }
+
+    Reveal.on('ready', toggleFooter);
+    Reveal.on('slidechanged', toggleFooter);
+  });
+</script>
+
+<div class="custom-footer">
+  🦋 <a href="https://bsky.app/profile/whitneylee.com" target="_blank">@whitneylee.com</a>
+  <span class="separator">|</span>
+  🦋 <a href="https://bsky.app/profile/thomasvitale.com" target="_blank">@thomasvitale.com</a>
+</div>

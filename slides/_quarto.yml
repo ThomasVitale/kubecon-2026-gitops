@@ -7,6 +7,7 @@ format:
     theme: [default, custom.scss]
     slide-number: true
     transition: slide
+    include-after-body: footer.html
     mermaid-format: svg
     mermaid:
       theme: neutral
